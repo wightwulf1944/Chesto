@@ -3,7 +3,6 @@ package me.shiro.chesto;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -43,7 +42,7 @@ public class PostAdapter
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (position == postList.size() - 1) {
+        if (position == postList.size() - Const.REQUEST_THRESHOLD) {
             postList.requestMorePosts();
         }
 
@@ -52,7 +51,7 @@ public class PostAdapter
 
         Glide.with(context)
                 .load(post.getPreviewFileUrl())
-                .override(400, 400)
+                .override(Const.MAX_THUMB_SIZE, Const.MAX_THUMB_SIZE)
                 .fitCenter()
                 .error(R.drawable.ic_placeholder_error)
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)

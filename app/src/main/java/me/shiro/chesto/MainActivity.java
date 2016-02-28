@@ -9,8 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
-import android.view.View;
-import android.widget.ProgressBar;
 
 import com.fivehundredpx.greedolayout.GreedoLayoutManager;
 import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration;
@@ -19,7 +17,6 @@ public final class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private ProgressBar progressBar;
     PostList postList;
 
     @Override
@@ -27,18 +24,15 @@ public final class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-
         postList = new PostList();
-        postList.registerLoadObserver(new LoadObserver());
 
         final PostAdapter postAdapter = new PostAdapter(postList);
 
         final GreedoLayoutManager layoutManager = new GreedoLayoutManager(postAdapter);
-        layoutManager.setMaxRowHeight(400);
+        layoutManager.setMaxRowHeight(Const.MAX_THUMB_SIZE);
 
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        int spacing = Utils.dpToPx(3, this);
+        int spacing = Utils.dpToPx(5, this);
         recyclerView.addItemDecoration(new GreedoSpacingItemDecoration(spacing));
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
@@ -77,16 +71,5 @@ public final class MainActivity extends AppCompatActivity {
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         return true;
-    }
-
-    public class LoadObserver {
-
-        public void onPostsLoadStarted() {
-            progressBar.setVisibility(View.VISIBLE);
-        }
-
-        public void onPostsLoadFinish() {
-            progressBar.setVisibility(View.GONE);
-        }
     }
 }

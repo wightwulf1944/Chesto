@@ -23,43 +23,30 @@ public final class PostList extends ArrayList<Post> {
     private static final String TAG = PostList.class.getSimpleName();
 
     private PostAdapter adapter;
-    private MainActivity.LoadObserver loadObserver;
     private int currentPage = 0;
     private String tags;
 
     public PostList() {
-        super(20);
+        super(Const.REQUEST_POST_COUNT);
     }
 
     public void registerPostAdapter(PostAdapter adapter) {
         this.adapter = adapter;
     }
 
-    public void registerLoadObserver(MainActivity.LoadObserver observer) {
-        this.loadObserver = observer;
-    }
-
     public void searchTags(final String tagSearch) {
-        loadObserver.onPostsLoadStarted();
         clear();
         currentPage = 0;
         tags = tagSearch;
-        String apiUrl =
-                new Danbooru()
-                        .posts()
-                        .page(++currentPage)
-                        .tags(tags)
-                        .make();
-
-        new GetPostsTask().execute(apiUrl);
+        requestMorePosts();
     }
 
     public void requestMorePosts() {
-        loadObserver.onPostsLoadStarted();
         String apiUrl =
                 new Danbooru()
                         .posts()
                         .page(++currentPage)
+                        .limit(Const.REQUEST_POST_COUNT)
                         .tags(tags)
                         .make();
         new GetPostsTask().execute(apiUrl);
@@ -85,7 +72,6 @@ public final class PostList extends ArrayList<Post> {
         int previousSize = size();
         addAll(newPostList);
         adapter.notifyItemRangeInserted(previousSize, newPostList.size());
-        loadObserver.onPostsLoadFinish();
     }
 
     private final class GetPostsTask extends AsyncTask<String, Void, List<Post>> {
@@ -101,7 +87,7 @@ public final class PostList extends ArrayList<Post> {
                 urlConnection.setRequestMethod("GET");
 
                 final int responseCode = urlConnection.getResponseCode();
-                if (responseCode != 200) {
+                if (responseCode != HttpURLConnection.HTTP_OK) {
                     Log.e(TAG, "Error in http response: "
                             + responseCode + " - "
                             + urlConnection.getResponseMessage());

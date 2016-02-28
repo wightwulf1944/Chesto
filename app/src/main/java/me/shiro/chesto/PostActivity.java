@@ -26,6 +26,7 @@ public class PostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
+        getSupportActionBar().hide();
 
         Post post = getIntent().getParcelableExtra(POST);
         ImageView imageView = (ImageView) findViewById(R.id.mainImageView);
