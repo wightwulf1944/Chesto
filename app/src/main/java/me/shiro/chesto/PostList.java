@@ -1,18 +1,19 @@
 package me.shiro.chesto;
 
-import android.os.AsyncTask;
 import android.util.JsonReader;
 import android.util.Log;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by Shiro on 2/26/2016.
@@ -21,13 +22,23 @@ import java.util.List;
 public final class PostList extends ArrayList<Post> {
 
     private static final String TAG = PostList.class.getSimpleName();
+    private static PostList instance;
+    private static OkHttpClient client;
 
     private PostAdapter adapter;
     private int currentPage = 0;
     private String tags;
 
-    public PostList() {
+    public static PostList getInstance() {
+        if (instance == null) {
+            instance = new PostList();
+        }
+        return instance;
+    }
+
+    private PostList() {
         super(Const.REQUEST_POST_COUNT);
+        client = new OkHttpClient();
     }
 
     public void registerPostAdapter(PostAdapter adapter) {
@@ -49,67 +60,50 @@ public final class PostList extends ArrayList<Post> {
                         .limit(Const.REQUEST_POST_COUNT)
                         .tags(tags)
                         .make();
-        new GetPostsTask().execute(apiUrl);
+
+        Request request = new Request.Builder()
+                .url(apiUrl)
+                .build();
+
+        client.newCall(request).enqueue(new PostRequestCallback());
     }
 
-    public void onMorePostsRecieved(List<Post> newPostList) {
-        // Remove duplicates in new postList
-        if (!isEmpty()) {
-            final int duplicateIndex = newPostList.indexOf(get(size() - 1));
-
-            if (duplicateIndex >= 0) {
-                newPostList.subList(0, duplicateIndex + 1).clear();
-            }
-        }
-
-        // Remove posts with no preview url
-        for (Iterator<Post> i = newPostList.iterator(); i.hasNext(); ) {
-            if (i.next().getPreviewFileUrl() == null) {
-                i.remove();
-            }
-        }
-
-        int previousSize = size();
-        addAll(newPostList);
-        adapter.notifyItemRangeInserted(previousSize, newPostList.size());
-    }
-
-    private final class GetPostsTask extends AsyncTask<String, Void, List<Post>> {
+    private class PostRequestCallback implements Callback {
 
         @Override
-        protected List<Post> doInBackground(String... params) {
-            final String apiUrl = params[0];
-            JsonReader jsonReader = null;
-
-            try {
-                URL url = new URL(apiUrl);
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-
-                final int responseCode = urlConnection.getResponseCode();
-                if (responseCode != HttpURLConnection.HTTP_OK) {
-                    Log.e(TAG, "Error in http response: "
-                            + responseCode + " - "
-                            + urlConnection.getResponseMessage());
-                }
-
-                final InputStream inputStream = urlConnection.getInputStream();
-                if (inputStream == null) {
-                    throw new NullPointerException();
-                }
-
-                jsonReader = new JsonReader(new BufferedReader(new InputStreamReader(inputStream)));
-            } catch (IOException e) {
-                Log.e(TAG, "Error getting json", e);
-            }
-
-            return PostParser.parsePage(jsonReader);
+        public void onFailure(Call call, IOException e) {
+            Log.e(TAG, "Error fetching more posts", e);
         }
 
         @Override
-        protected void onPostExecute(List<Post> newPostList) {
+        public void onResponse(Call call, Response response) throws IOException {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response);
+            }
+            Reader reader = response.body().charStream();
+            JsonReader jsonReader = new JsonReader(reader);
+            List<Post> newPostList = PostParser.parsePage(jsonReader);
+
             if (newPostList != null && !newPostList.isEmpty()) {
-                onMorePostsRecieved(newPostList);
+                // Remove duplicates in new postList
+                if (!isEmpty()) {
+                    final int duplicateIndex = newPostList.indexOf(get(size() - 1));
+
+                    if (duplicateIndex >= 0) {
+                        newPostList.subList(0, duplicateIndex + 1).clear();
+                    }
+                }
+
+                // Remove posts with no preview url
+                for (Iterator<Post> i = newPostList.iterator(); i.hasNext(); ) {
+                    if (i.next().getPreviewFileUrl() == null) {
+                        i.remove();
+                    }
+                }
+
+                int previousSize = size();
+                addAll(newPostList);
+                adapter.notifyItemRangeInserted(previousSize, newPostList.size());
             }
         }
     }

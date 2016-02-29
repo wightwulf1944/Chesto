@@ -25,7 +25,6 @@ public final class PostParser {
 
             while (json.hasNext()) {
                 posts.add(parsePost(json));
-                ;
             }
 
             json.endArray();

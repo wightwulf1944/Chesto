@@ -2,7 +2,6 @@ package me.shiro.chesto;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -69,7 +68,7 @@ public class PostAdapter
 
     @Override
     public double aspectRatioForIndex(int i) {
-        if(i >= postList.size()) {
+        if (i >= postList.size()) {
             return 1.0;
         } else {
             Post post = postList.get(i);

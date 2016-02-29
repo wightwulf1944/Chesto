@@ -1,15 +1,5 @@
 package me.shiro.chesto;
 
-import android.util.JsonReader;
-import android.util.Log;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 /**
  * Created by Shiro on 2/24/2016.
  * Makes api requests and returns a JsonReader

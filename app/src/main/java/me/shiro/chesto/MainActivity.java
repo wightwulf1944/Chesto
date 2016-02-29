@@ -25,7 +25,7 @@ public final class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        postList = new PostList();
+        postList = PostList.getInstance();
 
         final PostAdapter postAdapter = new PostAdapter(postList);
 
