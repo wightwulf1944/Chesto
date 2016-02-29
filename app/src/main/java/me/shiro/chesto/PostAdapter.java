@@ -37,6 +37,12 @@ public class PostAdapter
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ImageView imageView = new ImageView(context);
+        imageView.setBackgroundResource(R.color.darkBackground);
+        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        imageView.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+        ));
         return new ViewHolder(imageView);
     }
 
@@ -51,10 +57,8 @@ public class PostAdapter
 
         Glide.with(context)
                 .load(post.getPreviewFileUrl())
-                .override(Const.MAX_THUMB_SIZE, Const.MAX_THUMB_SIZE)
-                .fitCenter()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .error(R.drawable.ic_placeholder_error)
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .into(holder.mImageView);
     }
 

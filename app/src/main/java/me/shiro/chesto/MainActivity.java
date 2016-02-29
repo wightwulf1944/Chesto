@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 
@@ -29,10 +30,12 @@ public final class MainActivity extends AppCompatActivity {
         final PostAdapter postAdapter = new PostAdapter(postList);
 
         final GreedoLayoutManager layoutManager = new GreedoLayoutManager(postAdapter);
-        layoutManager.setMaxRowHeight(Const.MAX_THUMB_SIZE);
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        int maxRowHeight = metrics.heightPixels / 3;
+        layoutManager.setMaxRowHeight(maxRowHeight);
 
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        int spacing = Utils.dpToPx(5, this);
+        int spacing = Utils.dpToPx(4, this);
         recyclerView.addItemDecoration(new GreedoSpacingItemDecoration(spacing));
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
