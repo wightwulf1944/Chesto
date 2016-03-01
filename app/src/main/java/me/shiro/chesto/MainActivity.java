@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -18,28 +19,46 @@ public final class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    PostList postList;
+    private final PostList postList = PostList.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        postList = PostList.getInstance();
-
+        final SwipeRefreshLayout swipeView = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
         final PostAdapter postAdapter = new PostAdapter(postList);
-
         final GreedoLayoutManager layoutManager = new GreedoLayoutManager(postAdapter);
-        DisplayMetrics metrics = getResources().getDisplayMetrics();
-        int maxRowHeight = metrics.heightPixels / 3;
+        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+
+        postList.registerSwipeRefreshLayout(swipeView);
+
+        swipeView.setColorSchemeColors(R.color.colorPrimaryDark);
+        swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                postList.refresh();
+            }
+        });
+
+
+        final DisplayMetrics metrics = getResources().getDisplayMetrics();
+        final int maxRowHeight = metrics.heightPixels / 3;
         layoutManager.setMaxRowHeight(maxRowHeight);
 
-        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        int spacing = Utils.dpToPx(4, this);
+        final int spacing = Utils.dpToPx(4, this);
         recyclerView.addItemDecoration(new GreedoSpacingItemDecoration(spacing));
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(postAdapter);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                final boolean isAtTop = recyclerView.getChildAt(0).getTop() == spacing
+                        && layoutManager.findFirstVisibleItemPosition() == 0;
+                swipeView.setEnabled(isAtTop);
+            }
+        });
 
         handleIntent(getIntent());
     }

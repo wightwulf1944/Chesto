@@ -3,6 +3,7 @@ package me.shiro.chesto;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 
@@ -14,7 +15,7 @@ import com.bumptech.glide.Glide;
  */
 public class PostActivity extends AppCompatActivity {
 
-    public static final String POST = "me.shiro.chesto.POST";
+    private static final String POST = "me.shiro.chesto.POST";
 
     public static void start(Context context, Post post) {
         Intent intent = new Intent(context, PostActivity.class);
@@ -26,14 +27,22 @@ public class PostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
-        getSupportActionBar().hide();
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
 
         Post post = getIntent().getParcelableExtra(POST);
         ImageView imageView = (ImageView) findViewById(R.id.mainImageView);
 
         Glide.with(this)
                 .load(post.getFileUrl())
-                .error(R.drawable.ic_placeholder_error)
+                .error(R.drawable.ic_image_broken)
+                .thumbnail(
+                        Glide.with(this)
+                                .load(post.getPreviewFileUrl())
+                                .fitCenter()
+                )
                 .into(imageView);
     }
 }

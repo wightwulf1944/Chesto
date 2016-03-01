@@ -21,7 +21,7 @@ public class PostAdapter
     private static final String TAG = PostAdapter.class.getName();
 
     private Context context;
-    private PostList postList;
+    private final PostList postList;
 
     public PostAdapter(PostList postList) {
         this.postList = postList;
@@ -35,14 +35,7 @@ public class PostAdapter
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        ImageView imageView = new ImageView(context);
-        imageView.setBackgroundResource(R.color.darkBackground);
-        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-        imageView.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-        ));
-        return new ViewHolder(imageView);
+        return new ViewHolder(new ImageView(context));
     }
 
     @Override
@@ -56,8 +49,8 @@ public class PostAdapter
 
         Glide.with(context)
                 .load(post.getPreviewFileUrl())
+                .error(R.drawable.ic_image_broken)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .error(R.drawable.ic_placeholder_error)
                 .into(holder.mImageView);
     }
 
@@ -77,13 +70,19 @@ public class PostAdapter
     }
 
     public final class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public ImageView mImageView;
+        public final ImageView mImageView;
         public Post post;
 
         public ViewHolder(ImageView v) {
             super(v);
             mImageView = v;
             mImageView.setOnClickListener(this);
+            mImageView.setBackgroundResource(R.color.lightBackground);
+            mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            mImageView.setLayoutParams(new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+            ));
         }
 
         @Override

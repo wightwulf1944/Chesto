@@ -1,5 +1,8 @@
 package me.shiro.chesto;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.JsonReader;
 import android.util.Log;
 
@@ -24,8 +27,10 @@ public final class PostList extends ArrayList<Post> {
     private static final String TAG = PostList.class.getSimpleName();
     private static PostList instance;
     private static OkHttpClient client;
+    private static final android.os.Handler handler = new Handler(Looper.getMainLooper());
 
     private PostAdapter adapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private int currentPage = 0;
     private String tags;
 
@@ -43,6 +48,10 @@ public final class PostList extends ArrayList<Post> {
 
     public void registerPostAdapter(PostAdapter adapter) {
         this.adapter = adapter;
+    }
+
+    public void registerSwipeRefreshLayout(SwipeRefreshLayout swipeRefreshLayout) {
+        this.swipeRefreshLayout = swipeRefreshLayout;
     }
 
     public void searchTags(final String tagSearch) {
@@ -65,10 +74,10 @@ public final class PostList extends ArrayList<Post> {
                 .url(apiUrl)
                 .build();
 
-        client.newCall(request).enqueue(new PostRequestCallback());
+        client.newCall(request).enqueue(new RequestMorePosts());
     }
 
-    private class PostRequestCallback implements Callback {
+    private class RequestMorePosts implements Callback {
 
         @Override
         public void onFailure(Call call, IOException e) {
@@ -88,22 +97,80 @@ public final class PostList extends ArrayList<Post> {
                 // Remove duplicates in new postList
                 if (!isEmpty()) {
                     final int duplicateIndex = newPostList.indexOf(get(size() - 1));
-
                     if (duplicateIndex >= 0) {
                         newPostList.subList(0, duplicateIndex + 1).clear();
                     }
                 }
 
-                // Remove posts with no preview url
-                for (Iterator<Post> i = newPostList.iterator(); i.hasNext(); ) {
-                    if (i.next().getPreviewFileUrl() == null) {
-                        i.remove();
-                    }
-                }
+                filterInvalid(newPostList.iterator());
 
-                int previousSize = size();
+                final int previousSize = size();
                 addAll(newPostList);
-                adapter.notifyItemRangeInserted(previousSize, newPostList.size());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyItemRangeInserted(previousSize, size());
+                    }
+                });
+            }
+        }
+    }
+
+    public void refresh() {
+        String apiUrl =
+                new Danbooru()
+                        .posts()
+                        .page(1)
+                        .limit(Const.REQUEST_POST_COUNT)
+                        .tags(tags)
+                        .make();
+
+        Request request = new Request.Builder()
+                .url(apiUrl)
+                .build();
+
+        client.newCall(request).enqueue(new Refresh());
+    }
+
+    private class Refresh implements Callback {
+
+        @Override
+        public void onFailure(Call call, IOException e) {
+            Log.e(TAG, "Error trying to refresh posts", e);
+        }
+
+        @Override
+        public void onResponse(Call call, Response response) throws IOException {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response);
+            }
+            final Reader reader = response.body().charStream();
+            final JsonReader jsonReader = new JsonReader(reader);
+            final List<Post> newPostList = PostParser.parsePage(jsonReader);
+
+            filterInvalid(newPostList.iterator());
+
+            final int duplicateIndex = indexOf(newPostList.get(newPostList.size() - 1));
+            if (duplicateIndex >= 0) {
+                subList(0, duplicateIndex + 1).clear();
+            }
+
+            addAll(0, newPostList);
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    adapter.notifyItemRangeInserted(0, newPostList.size());
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            });
+        }
+    }
+
+    // Removes posts with no preview url
+    private void filterInvalid(Iterator<Post> i) {
+        while (i.hasNext()) {
+            if (i.next().getPreviewFileUrl() == null) {
+                i.remove();
             }
         }
     }
