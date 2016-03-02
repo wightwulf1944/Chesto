@@ -14,6 +14,7 @@ public class Post implements Parcelable {
     private int id;
     private int imageWidth;
     private int imageHeight;
+    private String fileExt;
     private String fileUrl;
     private String largeFileUrl;
     private String previewFileUrl;
@@ -56,6 +57,14 @@ public class Post implements Parcelable {
         this.imageHeight = imageHeight;
     }
 
+    public String getFileExt() {
+        return fileExt;
+    }
+
+    public void setFileExt(String fileExt) {
+        this.fileExt = fileExt;
+    }
+
     public String getFileUrl() {
         return (fileUrl == null) ? null : BASE_URL + fileUrl;
     }
@@ -86,6 +95,7 @@ public class Post implements Parcelable {
         id = in.readInt();
         imageWidth = in.readInt();
         imageHeight = in.readInt();
+        fileExt = in.readString();
         fileUrl = in.readString();
         largeFileUrl = in.readString();
         previewFileUrl = in.readString();
@@ -101,6 +111,7 @@ public class Post implements Parcelable {
         dest.writeInt(id);
         dest.writeInt(imageWidth);
         dest.writeInt(imageHeight);
+        dest.writeString(fileExt);
         dest.writeString(fileUrl);
         dest.writeString(largeFileUrl);
         dest.writeString(previewFileUrl);

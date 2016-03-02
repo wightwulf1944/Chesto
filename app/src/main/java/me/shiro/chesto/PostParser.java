@@ -60,6 +60,9 @@ public final class PostParser {
                     case "image_height":
                         post.setImageHeight(json.nextInt());
                         break;
+                    case "file_ext":
+                        post.setFileExt("." + json.nextString());
+                        break;
                     case "file_url":
                         post.setFileUrl(json.nextString());
                         break;
