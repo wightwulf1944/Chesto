@@ -110,6 +110,7 @@ public final class PostList extends ArrayList<Post> {
                     @Override
                     public void run() {
                         adapter.notifyItemRangeInserted(previousSize, size());
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                 });
             }

@@ -11,6 +11,7 @@ import android.support.v7.widget.SearchView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 
 import com.fivehundredpx.greedolayout.GreedoLayoutManager;
 import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration;
@@ -20,13 +21,14 @@ public final class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private final PostList postList = PostList.getInstance();
+    private SwipeRefreshLayout swipeView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final SwipeRefreshLayout swipeView = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
+        swipeView = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
         final PostAdapter postAdapter = new PostAdapter(postList);
         final GreedoLayoutManager layoutManager = new GreedoLayoutManager(postAdapter);
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -54,9 +56,13 @@ public final class MainActivity extends AppCompatActivity {
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                final boolean isAtTop = recyclerView.getChildAt(0).getTop() == spacing
-                        && layoutManager.findFirstVisibleItemPosition() == 0;
-                swipeView.setEnabled(isAtTop);
+                View topChild = recyclerView.getChildAt(0);
+                if (topChild != null) {
+                    swipeView.setEnabled(
+                            topChild.getTop() == spacing
+                                    && layoutManager.findFirstVisibleItemPosition() == 0
+                    );
+                }
             }
         });
 
@@ -76,6 +82,8 @@ public final class MainActivity extends AppCompatActivity {
                 break;
 
             case Intent.ACTION_SEARCH:
+                swipeView.scrollTo(0,0);
+                swipeView.setRefreshing(true);
                 postList.searchTags(intent.getStringExtra(SearchManager.QUERY));
                 break;
 
