@@ -72,6 +72,18 @@ public final class PostParser {
                     case "preview_file_url":
                         post.setPreviewFileUrl(json.nextString());
                         break;
+                    case "tag_string_artist":
+                        post.setArtistTag(json.nextString());
+                        break;
+                    case "tag_string_character":
+                        post.setCharacterTag(json.nextString());
+                        break;
+                    case "tag_string_copyright":
+                        post.setCopyrightTag(json.nextString());
+                        break;
+                    case "tag_string_general":
+                        post.setGeneralTag(json.nextString());
+                        break;
                     default:
                         json.skipValue();
                         break;

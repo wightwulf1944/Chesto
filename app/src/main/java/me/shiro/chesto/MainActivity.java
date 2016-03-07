@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.fivehundredpx.greedolayout.GreedoLayoutManager;
@@ -22,12 +24,15 @@ public final class MainActivity extends AppCompatActivity {
 
     private final PostList postList = PostList.getInstance();
     private SwipeRefreshLayout swipeView;
+    private MenuItem searchViewItem;
+    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        actionBar = getSupportActionBar();
         swipeView = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
         final PostAdapter postAdapter = new PostAdapter(postList);
         final GreedoLayoutManager layoutManager = new GreedoLayoutManager(postAdapter);
@@ -44,8 +49,7 @@ public final class MainActivity extends AppCompatActivity {
         });
 
 
-        final DisplayMetrics metrics = getResources().getDisplayMetrics();
-        final int maxRowHeight = metrics.heightPixels / 3;
+        final int maxRowHeight = getResources().getDisplayMetrics().heightPixels / 3;
         layoutManager.setMaxRowHeight(maxRowHeight);
 
         final int spacing = Utils.dpToPx(4, this);
@@ -66,39 +70,26 @@ public final class MainActivity extends AppCompatActivity {
             }
         });
 
-        handleIntent(getIntent());
+        postList.searchTags("");
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
-        handleIntent(intent);
-    }
-
-    private void handleIntent(Intent intent) {
-        switch (intent.getAction()) {
-
-            case Intent.ACTION_MAIN:
-                postList.searchTags("");
-                break;
-
-            case Intent.ACTION_SEARCH:
-                swipeView.scrollTo(0,0);
-                swipeView.setRefreshing(true);
-                postList.searchTags(intent.getStringExtra(SearchManager.QUERY));
-                break;
-
-            default:
-                Log.w(TAG, "Unhandled intent: " + intent.getAction());
-                break;
-        }
+        final String query = intent.getStringExtra(SearchManager.QUERY);
+        postList.searchTags(query);
+        actionBar.setSubtitle(query);
+        searchViewItem.collapseActionView();
+        swipeView.scrollTo(0, 0);
+        swipeView.setRefreshing(true);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.options_menu, menu);
 
+        searchViewItem = menu.findItem(R.id.search);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        SearchView searchView = (SearchView) searchViewItem.getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         return true;
     }

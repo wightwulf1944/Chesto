@@ -18,6 +18,10 @@ public class Post implements Parcelable {
     private String fileUrl;
     private String largeFileUrl;
     private String previewFileUrl;
+    private String[] artistTag;
+    private String[] copyrightTag;
+    private String[] characterTag;
+    private String[] generalTag;
 
     public Post() {
         //Default constructor
@@ -89,6 +93,37 @@ public class Post implements Parcelable {
         this.previewFileUrl = previewFileUrl;
     }
 
+    public String[] getArtistTag() {
+        return artistTag;
+    }
+
+    public void setArtistTag(String artistTag) {
+        this.artistTag = artistTag.split(" ");
+    }
+
+    public String[] getCopyrightTag() {
+        return copyrightTag;
+    }
+
+    public void setCopyrightTag(String copyrightTag) {
+        this.copyrightTag = copyrightTag.split(" ");
+    }
+
+    public String[] getCharacterTag() {
+        return characterTag;
+    }
+
+    public void setCharacterTag(String characterTag) {
+        this.characterTag = characterTag.split(" ");
+    }
+
+    public String[] getGeneralTag() {
+        return generalTag;
+    }
+
+    public void setGeneralTag(String generalTag) {
+        this.generalTag = generalTag.split(" ");
+    }
 
     // Auto-generated code by http://www.parcelabler.com/
     protected Post(Parcel in) {
@@ -99,6 +134,10 @@ public class Post implements Parcelable {
         fileUrl = in.readString();
         largeFileUrl = in.readString();
         previewFileUrl = in.readString();
+        artistTag = in.createStringArray();
+        copyrightTag = in.createStringArray();
+        characterTag = in.createStringArray();
+        generalTag = in.createStringArray();
     }
 
     @Override
@@ -115,6 +154,10 @@ public class Post implements Parcelable {
         dest.writeString(fileUrl);
         dest.writeString(largeFileUrl);
         dest.writeString(previewFileUrl);
+        dest.writeStringArray(artistTag);
+        dest.writeStringArray(copyrightTag);
+        dest.writeStringArray(characterTag);
+        dest.writeStringArray(generalTag);
     }
 
     @SuppressWarnings("unused")
