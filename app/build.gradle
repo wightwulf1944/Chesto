@@ -23,7 +23,9 @@ android {
 }
 
 repositories {
-    maven { url 'https://github.com/500px/greedo-layout-for-android/raw/master/releases/' }
+    maven {
+        url 'https://github.com/500px/greedo-layout-for-android/raw/master/releases/'
+    }
 }
 
 dependencies {
@@ -35,4 +37,5 @@ dependencies {
     compile 'com.fivehundredpx:greedo-layout:1.0.0'
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
     compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'org.apmem.tools:layouts:1.10@aar'
 }

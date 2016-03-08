@@ -27,12 +27,22 @@
         android:onClick="onDownloadButtonClicked"
         android:src="@drawable/ic_download" />
 
-    <ListView
+    <org.apmem.tools.layouts.FlowLayout
         android:id="@+id/bottomSheet"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
+        android:paddingTop="@dimen/keyline"
         app:behavior_peekHeight="@dimen/keyline"
-        app:layout_behavior="android.support.design.widget.BottomSheetBehavior" />
+        app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:padding="2dp"
+            android:text="Tags:" />
+
+    </org.apmem.tools.layouts.FlowLayout>
 
 </android.support.design.widget.CoordinatorLayout>

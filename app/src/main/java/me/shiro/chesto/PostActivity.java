@@ -6,14 +6,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
@@ -23,6 +25,9 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
+
+import org.apmem.tools.layouts.FlowLayout;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -53,6 +58,23 @@ public class PostActivity extends AppCompatActivity {
         post = getIntent().getParcelableExtra(POST);
         imageView = (ImageView) findViewById(R.id.mainImageView);
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        final FlowLayout bottomSheet = (FlowLayout) findViewById(R.id.bottomSheet);
+
+        for(String tag : post.getGeneralTag()) {
+            FlowLayout.LayoutParams params = new FlowLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            final int margin = Utils.dpToPx(6, this);
+            params.setMargins(margin, margin, margin, margin);
+            TextView tagView = new TextView(this);
+            tagView.setText(tag);
+            tagView.setBackgroundColor(ContextCompat.getColor(this, android.R.color.darker_gray));
+            tagView.setTextColor(ContextCompat.getColor(this, android.R.color.white));
+            final int padding = Utils.dpToPx(2, this);
+            tagView.setPadding(padding, padding, padding, padding);
+            tagView.setLayoutParams(params);
+            bottomSheet.addView(tagView);
+        }
 
         DrawableRequestBuilder thumbnail = Glide.with(this)
                 .load(post.getPreviewFileUrl())
