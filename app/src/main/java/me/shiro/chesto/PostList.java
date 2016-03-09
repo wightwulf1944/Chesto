@@ -25,6 +25,7 @@ import okhttp3.Response;
 public final class PostList extends ArrayList<Post> {
 
     private static final String TAG = PostList.class.getSimpleName();
+    private static final int REQUEST_POST_COUNT = 50;
     private static PostList instance;
     private static OkHttpClient client;
     private static final android.os.Handler handler = new Handler(Looper.getMainLooper());
@@ -42,7 +43,7 @@ public final class PostList extends ArrayList<Post> {
     }
 
     private PostList() {
-        super(Const.REQUEST_POST_COUNT);
+        super(REQUEST_POST_COUNT);
         client = new OkHttpClient();
     }
 
@@ -66,7 +67,7 @@ public final class PostList extends ArrayList<Post> {
                 new Danbooru()
                         .posts()
                         .page(++currentPage)
-                        .limit(Const.REQUEST_POST_COUNT)
+                        .limit(REQUEST_POST_COUNT)
                         .tags(tags)
                         .make();
 
@@ -122,7 +123,7 @@ public final class PostList extends ArrayList<Post> {
                 new Danbooru()
                         .posts()
                         .page(1)
-                        .limit(Const.REQUEST_POST_COUNT)
+                        .limit(REQUEST_POST_COUNT)
                         .tags(tags)
                         .make();
 

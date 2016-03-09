@@ -9,8 +9,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,8 +17,6 @@ import com.fivehundredpx.greedolayout.GreedoLayoutManager;
 import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration;
 
 public final class MainActivity extends AppCompatActivity {
-
-    private static final String TAG = MainActivity.class.getSimpleName();
 
     private final PostList postList = PostList.getInstance();
     private SwipeRefreshLayout swipeView;
@@ -32,6 +28,7 @@ public final class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Utils.appContext = getApplicationContext();
         actionBar = getSupportActionBar();
         swipeView = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
         final PostAdapter postAdapter = new PostAdapter(postList);
@@ -52,7 +49,7 @@ public final class MainActivity extends AppCompatActivity {
         final int maxRowHeight = getResources().getDisplayMetrics().heightPixels / 3;
         layoutManager.setMaxRowHeight(maxRowHeight);
 
-        final int spacing = Utils.dpToPx(4, this);
+        final int spacing = Utils.dpToPx(4);
         recyclerView.addItemDecoration(new GreedoSpacingItemDecoration(spacing));
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
@@ -70,7 +67,7 @@ public final class MainActivity extends AppCompatActivity {
             }
         });
 
-        postList.searchTags("");
+        handleIntent(getIntent());
     }
 
     @Override
@@ -81,6 +78,24 @@ public final class MainActivity extends AppCompatActivity {
         searchViewItem.collapseActionView();
         swipeView.scrollTo(0, 0);
         swipeView.setRefreshing(true);
+    }
+
+    private void handleIntent(Intent intent) {
+        switch (intent.getAction()) {
+            case Intent.ACTION_SEARCH:
+                final String query = intent.getStringExtra(SearchManager.QUERY);
+                postList.searchTags(query);
+                actionBar.setSubtitle(query);
+                swipeView.scrollTo(0, 0);
+                swipeView.setRefreshing(true);
+                if (searchViewItem != null) {
+                    searchViewItem.collapseActionView();
+                }
+                break;
+            default:
+                postList.searchTags("");
+                break;
+        }
     }
 
     @Override

@@ -6,4 +6,9 @@
 
     <color name="lightBackground">#DDDDDD</color>
     <color name="darkBackground">#C0C0C0</color>
+
+    <color name="artistTagText">#AA0000</color>
+    <color name="copyrightTagText">#AA00AA</color>
+    <color name="characterTagText">#00AA00</color>
+    <color name="generalTagText">#FFFFFF</color>
 </resources>

@@ -18,7 +18,7 @@ public class PostAdapter
         extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         implements GreedoLayoutSizeCalculator.SizeCalculatorDelegate {
 
-    private static final String TAG = PostAdapter.class.getName();
+    private static final int REQUEST_THRESHOLD = 20;
 
     private Context context;
     private final PostList postList;
@@ -40,7 +40,7 @@ public class PostAdapter
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (position == postList.size() - Const.REQUEST_THRESHOLD) {
+        if (position == postList.size() - REQUEST_THRESHOLD) {
             postList.requestMorePosts();
         }
 

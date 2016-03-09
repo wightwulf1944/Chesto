@@ -6,8 +6,6 @@ package me.shiro.chesto;
  */
 public final class Danbooru {
 
-    private static final String TAG = Danbooru.class.getSimpleName();
-
     private final StringBuilder request;
     private boolean isFirstArgument;
 

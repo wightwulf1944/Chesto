@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="@dimen/keyline" />
+        android:layout_marginBottom="@dimen/keyline"
+        tools:ignore="ContentDescription" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -27,22 +29,25 @@
         android:onClick="onDownloadButtonClicked"
         android:src="@drawable/ic_download" />
 
-    <org.apmem.tools.layouts.FlowLayout
-        android:id="@+id/bottomSheet"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:paddingTop="@dimen/keyline"
+        android:orientation="vertical"
         app:behavior_peekHeight="@dimen/keyline"
+        app:elevation="6dp"
         app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
-        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="6dp"
-            android:padding="2dp"
-            android:text="Tags:" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/keyline"
+            android:background="@color/colorPrimary" />
 
-    </org.apmem.tools.layouts.FlowLayout>
+        <org.apmem.tools.layouts.FlowLayout
+            android:id="@+id/bottomSheet"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white" />
+
+    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
