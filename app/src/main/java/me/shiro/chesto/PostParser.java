@@ -18,7 +18,7 @@ public final class PostParser {
 
     public static List<Post> parsePage(final JsonReader json) {
 
-        List<Post> posts = new ArrayList<>(20);
+        List<Post> posts = new ArrayList<>();
 
         try {
             json.beginArray();

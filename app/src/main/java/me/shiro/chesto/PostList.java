@@ -94,27 +94,42 @@ public final class PostList extends ArrayList<Post> {
             JsonReader jsonReader = new JsonReader(reader);
             List<Post> newPostList = PostParser.parsePage(jsonReader);
 
-            if (newPostList != null && !newPostList.isEmpty()) {
-                // Remove duplicates in new postList
-                if (!isEmpty()) {
-                    final int duplicateIndex = newPostList.indexOf(get(size() - 1));
-                    if (duplicateIndex >= 0) {
-                        newPostList.subList(0, duplicateIndex + 1).clear();
-                    }
+            if (isEmpty()) {
+                if (!newPostList.isEmpty()) {
+                    filterInvalid(newPostList.iterator());
+                    addAll(newPostList);
                 }
-
-                filterInvalid(newPostList.iterator());
-
-                final int previousSize = size();
-                addAll(newPostList);
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        adapter.notifyItemRangeInserted(previousSize, size());
-                        swipeRefreshLayout.setRefreshing(false);
+                        adapter.notifyDataSetChanged();
                     }
                 });
+            } else if (!newPostList.isEmpty()) {
+                // Remove duplicates in new postList
+                final int duplicateIndex = newPostList.indexOf(get(size() - 1));
+                if (duplicateIndex >= 0) {
+                    newPostList.subList(0, duplicateIndex + 1).clear();
+                }
+
+                if (!newPostList.isEmpty()) {
+                    filterInvalid(newPostList.iterator());
+                    final int previousSize = size();
+                    addAll(newPostList);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.notifyItemRangeInserted(previousSize, size());
+                        }
+                    });
+                }
             }
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            });
         }
     }
 

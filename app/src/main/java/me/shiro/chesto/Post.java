@@ -98,7 +98,9 @@ public class Post implements Parcelable {
     }
 
     public void setArtistTag(String artistTag) {
-        this.artistTag = artistTag.split(" ");
+        if (!artistTag.isEmpty()) {
+            this.artistTag = artistTag.split(" ");
+        }
     }
 
     public String[] getCopyrightTag() {
@@ -106,7 +108,9 @@ public class Post implements Parcelable {
     }
 
     public void setCopyrightTag(String copyrightTag) {
-        this.copyrightTag = copyrightTag.split(" ");
+        if (!copyrightTag.isEmpty()) {
+            this.copyrightTag = copyrightTag.split(" ");
+        }
     }
 
     public String[] getCharacterTag() {
@@ -114,7 +118,9 @@ public class Post implements Parcelable {
     }
 
     public void setCharacterTag(String characterTag) {
-        this.characterTag = characterTag.split(" ");
+        if (!characterTag.isEmpty()) {
+            this.characterTag = characterTag.split(" ");
+        }
     }
 
     public String[] getGeneralTag() {
@@ -122,7 +128,9 @@ public class Post implements Parcelable {
     }
 
     public void setGeneralTag(String generalTag) {
-        this.generalTag = generalTag.split(" ");
+        if (!generalTag.isEmpty()) {
+            this.generalTag = generalTag.split(" ");
+        }
     }
 
     // Auto-generated code by http://www.parcelabler.com/

@@ -22,6 +22,7 @@ public final class MainActivity extends AppCompatActivity {
     private SwipeRefreshLayout swipeView;
     private MenuItem searchViewItem;
     private ActionBar actionBar;
+    private String searchQuery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +45,6 @@ public final class MainActivity extends AppCompatActivity {
                 postList.refresh();
             }
         });
-
 
         final int maxRowHeight = getResources().getDisplayMetrics().heightPixels / 3;
         layoutManager.setMaxRowHeight(maxRowHeight);
@@ -72,25 +72,18 @@ public final class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
-        final String query = intent.getStringExtra(SearchManager.QUERY);
-        postList.searchTags(query);
-        actionBar.setSubtitle(query);
-        searchViewItem.collapseActionView();
-        swipeView.scrollTo(0, 0);
-        swipeView.setRefreshing(true);
+        handleIntent(intent);
     }
 
     private void handleIntent(Intent intent) {
+        swipeView.setRefreshing(true);
         switch (intent.getAction()) {
             case Intent.ACTION_SEARCH:
-                final String query = intent.getStringExtra(SearchManager.QUERY);
-                postList.searchTags(query);
-                actionBar.setSubtitle(query);
                 swipeView.scrollTo(0, 0);
-                swipeView.setRefreshing(true);
-                if (searchViewItem != null) {
-                    searchViewItem.collapseActionView();
-                }
+                searchViewItem.collapseActionView();
+                searchQuery = intent.getStringExtra(SearchManager.QUERY);
+                actionBar.setSubtitle(searchQuery);
+                postList.searchTags(searchQuery);
                 break;
             default:
                 postList.searchTags("");
@@ -103,9 +96,26 @@ public final class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.options_menu, menu);
 
         searchViewItem = menu.findItem(R.id.search);
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) searchViewItem.getActionView();
+
+        final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        final SearchView searchView = (SearchView) searchViewItem.getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        searchViewItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (!searchViewItem.isActionViewExpanded()) {
+                    searchViewItem.expandActionView();
+                    if (searchQuery != null) {
+                        searchView.setQuery(searchQuery, false);
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
         return true;
     }
 }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import org.apmem.tools.layouts.FlowLayout;
@@ -18,7 +19,6 @@ public class LoadIntoFlow {
 
     private static final int MARGIN = Utils.dpToPx(6);
     private static final int PADDING = Utils.dpToPx(2);
-    private static int TAG_BG_COLOR;
     private final FlowLayout layout;
     private final Context context;
     private String label;
@@ -31,7 +31,6 @@ public class LoadIntoFlow {
     private LoadIntoFlow(final FlowLayout layout) {
         this.layout = layout;
         this.context = layout.getContext();
-        TAG_BG_COLOR = ContextCompat.getColor(context, android.R.color.darker_gray);
     }
 
     public LoadIntoFlow label(final String label) {
@@ -46,12 +45,11 @@ public class LoadIntoFlow {
 
     public LoadIntoFlow tags(final String[] tags) {
         if (tags != null && tags.length > 0) {
-            TextView labelView = view(label, true);
-            layout.addView(labelView);
+            layout.addView(view(label, true));
             for (final String tag : tags) {
                 TextView tagView = view(tag, false);
-                tagView.setBackgroundColor(TAG_BG_COLOR);
                 tagView.setTextColor(tagTextColor);
+                tagView.setBackgroundResource(R.drawable.bg_tagview);
                 layout.addView(tagView);
 
                 tagView.setOnClickListener(new View.OnClickListener() {
