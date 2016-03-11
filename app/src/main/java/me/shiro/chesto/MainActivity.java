@@ -3,7 +3,9 @@ package me.shiro.chesto;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.MatrixCursor;
 import android.os.Bundle;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +14,7 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CursorAdapter;
 
 import com.fivehundredpx.greedolayout.GreedoLayoutManager;
 import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration;
@@ -80,10 +83,12 @@ public final class MainActivity extends AppCompatActivity {
         switch (intent.getAction()) {
             case Intent.ACTION_SEARCH:
                 swipeView.scrollTo(0, 0);
-                searchViewItem.collapseActionView();
                 searchQuery = intent.getStringExtra(SearchManager.QUERY);
                 actionBar.setSubtitle(searchQuery);
                 postList.searchTags(searchQuery);
+                if (searchViewItem != null) {
+                    searchViewItem.collapseActionView();
+                }
                 break;
             default:
                 postList.searchTags("");
@@ -113,6 +118,38 @@ public final class MainActivity extends AppCompatActivity {
                 } else {
                     return false;
                 }
+            }
+        });
+
+        // Initialize search suggestions
+        final String[] columns = new String[]{
+                "_ID",
+                "SUGGEST_COLUMN_TEXT_1"
+        };
+        final int[] views = new int[]{
+                0,
+                R.id.tagSuggestion
+        };
+        final MatrixCursor cursor = new MatrixCursor(columns);
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(
+                this,
+                R.layout.searchview_suggestions,
+                cursor,
+                columns,
+                views,
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
+        );
+        searchView.setSuggestionsAdapter(adapter);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                cursor.newRow().add("123").add(newText);
+                return true;
             }
         });
 

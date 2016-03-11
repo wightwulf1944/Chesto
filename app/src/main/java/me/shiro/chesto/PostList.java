@@ -167,16 +167,26 @@ public final class PostList extends ArrayList<Post> {
 
             filterInvalid(newPostList.iterator());
 
-            final int duplicateIndex = indexOf(newPostList.get(newPostList.size() - 1));
-            if (duplicateIndex >= 0) {
-                subList(0, duplicateIndex + 1).clear();
+            if (!isEmpty() && !newPostList.isEmpty()) {
+                final int duplicateIndex = indexOf(newPostList.get(newPostList.size() - 1));
+                if (duplicateIndex >= 0) {
+                    subList(0, duplicateIndex + 1).clear();
+                }
             }
 
-            addAll(0, newPostList);
+            if (!newPostList.isEmpty()) {
+                addAll(0, newPostList);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyItemRangeInserted(0, newPostList.size());
+                    }
+                });
+            }
+
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    adapter.notifyItemRangeInserted(0, newPostList.size());
                     swipeRefreshLayout.setRefreshing(false);
                 }
             });

@@ -1,62 +1,45 @@
 package me.shiro.chesto;
 
+import android.net.Uri;
+
 /**
  * Created by Shiro on 2/24/2016.
- * Makes api requests and returns a JsonReader
+ * Restrictive wrapper for Uri.Builder
  */
 public final class Danbooru {
 
-    private final StringBuilder request;
-    private boolean isFirstArgument;
+    private final Uri.Builder builder;
 
     public Danbooru() {
-        isFirstArgument = true;
-        request = new StringBuilder("https://danbooru.donmai.us/");
+        builder = new Uri.Builder()
+                .scheme("https")
+                .authority("danbooru.donmai.us");
     }
 
     public Posts posts() {
-        request.append("posts.json");
+        builder.appendPath("posts.json");
         return new Posts();
     }
 
     public class Posts {
 
-        public Danbooru.Posts page(final int page) {
-            request.append(delimiter());
-            request.append("page=");
-            request.append(page);
+        public Danbooru.Posts page(final Integer page) {
+            builder.appendQueryParameter("page", page.toString());
             return this;
         }
 
-        public Danbooru.Posts limit(final int limit) {
-            request.append(delimiter());
-            request.append("limit=");
-            request.append(limit);
+        public Danbooru.Posts limit(final Integer limit) {
+            builder.appendQueryParameter("limit", limit.toString());
             return this;
         }
 
         public Danbooru.Posts tags(String tags) {
-            request.append(delimiter());
-            request.append("tags=");
-            request.append(tags.replace(" ", "+"));
+            builder.appendQueryParameter("tags", tags.replace(" ", "+"));
             return this;
         }
 
         public String make() {
-            return Danbooru.this.make();
+            return builder.toString();
         }
-    }
-
-    private char delimiter() {
-        if (isFirstArgument) {
-            isFirstArgument = false;
-            return '?';
-        } else {
-            return '&';
-        }
-    }
-
-    private String make() {
-        return request.toString();
     }
 }
