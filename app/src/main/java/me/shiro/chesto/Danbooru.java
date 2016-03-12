@@ -2,6 +2,10 @@ package me.shiro.chesto;
 
 import android.net.Uri;
 
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+
 /**
  * Created by Shiro on 2/24/2016.
  * Restrictive wrapper for Uri.Builder
@@ -9,6 +13,7 @@ import android.net.Uri;
 public final class Danbooru {
 
     private final Uri.Builder builder;
+    private static final OkHttpClient client = new OkHttpClient();
 
     public Danbooru() {
         builder = new Uri.Builder()
@@ -16,13 +21,22 @@ public final class Danbooru {
                 .authority("danbooru.donmai.us");
     }
 
+    private class Common {
+        public void into(Callback callback) {
+            Request request = new Request.Builder()
+                    .url(builder.toString())
+                    .build();
+
+            client.newCall(request).enqueue(callback);
+        }
+    }
+
     public Posts posts() {
         builder.appendPath("posts.json");
         return new Posts();
     }
 
-    public class Posts {
-
+    public final class Posts extends Common {
         public Danbooru.Posts page(final Integer page) {
             builder.appendQueryParameter("page", page.toString());
             return this;
@@ -37,9 +51,22 @@ public final class Danbooru {
             builder.appendQueryParameter("tags", tags.replace(" ", "+"));
             return this;
         }
+    }
 
-        public String make() {
-            return builder.toString();
+    public Tags tags() {
+        builder.path("tags.json");
+        return new Tags();
+    }
+
+    public final class Tags extends Common {
+        public Danbooru.Tags nameMatches(final String tagName) {
+            builder.appendQueryParameter("search[name_matches]", tagName + '*');
+            return this;
+        }
+
+        public Danbooru.Tags order(final String order) {
+            builder.appendQueryParameter("search[order]", order);
+            return this;
         }
     }
 }

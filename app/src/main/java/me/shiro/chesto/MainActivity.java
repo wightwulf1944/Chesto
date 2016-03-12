@@ -19,6 +19,12 @@ import android.widget.CursorAdapter;
 import com.fivehundredpx.greedolayout.GreedoLayoutManager;
 import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration;
 
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
+
 public final class MainActivity extends AppCompatActivity {
 
     private final PostList postList = PostList.getInstance();
@@ -131,9 +137,9 @@ public final class MainActivity extends AppCompatActivity {
                 R.id.tagSuggestion
         };
         final MatrixCursor cursor = new MatrixCursor(columns);
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(
+        final SimpleCursorAdapter adapter = new SimpleCursorAdapter(
                 this,
-                R.layout.searchview_suggestions,
+                R.layout.item_searchview_suggestions,
                 cursor,
                 columns,
                 views,
@@ -148,7 +154,22 @@ public final class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                cursor.newRow().add("123").add(newText);
+//                cursor.newRow().add("123").add(newText);
+                new Danbooru()
+                        .tags()
+                        .nameMatches(newText)
+                        .order("count")
+                        .into(new Callback() {
+                            @Override
+                            public void onFailure(Call call, IOException e) {
+
+                            }
+
+                            @Override
+                            public void onResponse(Call call, Response response) throws IOException {
+
+                            }
+                        });
                 return true;
             }
         });
