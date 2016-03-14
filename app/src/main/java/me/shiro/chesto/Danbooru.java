@@ -68,5 +68,10 @@ public final class Danbooru {
             builder.appendQueryParameter("search[order]", order);
             return this;
         }
+
+        public Danbooru.Tags limit(final Integer limit) {
+            builder.appendQueryParameter("limit", limit.toString());
+            return this;
+        }
     }
 }

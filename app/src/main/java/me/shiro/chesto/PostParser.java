@@ -17,7 +17,6 @@ public final class PostParser {
     private static final String TAG = PostParser.class.getSimpleName();
 
     public static List<Post> parsePage(final JsonReader json) {
-
         List<Post> posts = new ArrayList<>();
 
         try {
@@ -29,7 +28,7 @@ public final class PostParser {
 
             json.endArray();
         } catch (IOException e) {
-            Log.d(TAG, "Error parsing json", e);
+            Log.d(TAG, "Error parsing json for posts", e);
         } finally {
             try {
                 json.close();
@@ -47,6 +46,7 @@ public final class PostParser {
 
         while (json.hasNext()) {
             String name = json.nextName();
+            // TODO: check if isempty
             if (json.peek() == JsonToken.NULL) {
                 json.nextNull();
             } else {
