@@ -37,6 +37,8 @@ public final class SearchSuggestions implements
     private final SearchView searchView;
     private final SimpleCursorAdapter adapter;
     private List<Tag> suggestedTags;
+    private String query;
+    private Call suggestionCall;
 
     public SearchSuggestions(final SearchView searchView, final Context context) {
         this.searchView = searchView;
@@ -61,7 +63,10 @@ public final class SearchSuggestions implements
     @Override
     public boolean onSuggestionClick(int position) {
         final Tag selectedSuggestion = suggestedTags.get(position);
-        searchView.setQuery(selectedSuggestion.tagName, false);
+        final String newQuery = searchView.getQuery()
+                .toString()
+                .replace(query, selectedSuggestion.tagName);
+        searchView.setQuery(newQuery, false);
         return true;
     }
 
@@ -72,23 +77,37 @@ public final class SearchSuggestions implements
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        new Danbooru()
-                .tags()
-                .nameMatches(newText)
-                .order("count")
-                .limit(10)
-                .into(this);
+        if (suggestionCall != null) {
+            suggestionCall.cancel();
+        }
+        adapter.changeCursor(null);
 
-        return true;
+        final int spaceIndex = newText.lastIndexOf(" ");
+        if (spaceIndex >= 0) {
+            query = newText.substring(spaceIndex + 1);
+        } else {
+            query = newText;
+        }
+
+        if (query.length() > 1) {
+            suggestionCall = new Danbooru()
+                    .tagSuggestions()
+                    .nameMatches(query)
+                    .into(this);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     public void onFailure(Call call, IOException e) {
-        Log.e("TEST", "Error fetching tag suggestions", e);
+        Log.w("TEST", "Did not fetch tag suggestions", e);
     }
 
     @Override
     public void onResponse(Call call, Response response) throws IOException {
+        final Call thisCall = call;
         if (!response.isSuccessful()) {
             throw new IOException("Unexpected code " + response);
         }
@@ -102,7 +121,9 @@ public final class SearchSuggestions implements
                 for (Tag tag : suggestedTags) {
                     cursor.newRow().add(tag.id).add(tag.tagName);
                 }
-                adapter.changeCursor(cursor);
+                if (!thisCall.isCanceled()) {
+                    adapter.changeCursor(cursor);
+                }
             }
         });
     }

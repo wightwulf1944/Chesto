@@ -5,10 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,8 +20,9 @@ public final class MainActivity extends AppCompatActivity {
 
     private final PostList postList = PostList.getInstance();
     private SwipeRefreshLayout swipeView;
+    private RecyclerView recyclerView;
     private MenuItem searchViewItem;
-    private ActionBar actionBar;
+    private Toolbar actionBar;
     private String searchQuery;
 
     @Override
@@ -29,9 +30,11 @@ public final class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        actionBar = (Toolbar) findViewById(R.id.actionBar);
+        setSupportActionBar(actionBar);
         Utils.appContext = getApplicationContext();
-        actionBar = getSupportActionBar();
         swipeView = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         final PostAdapter postAdapter = new PostAdapter(postList);
         final GreedoLayoutManager layoutManager = new GreedoLayoutManager(postAdapter);
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -79,6 +82,7 @@ public final class MainActivity extends AppCompatActivity {
         swipeView.setRefreshing(true);
         switch (intent.getAction()) {
             case Intent.ACTION_SEARCH:
+                recyclerView.scrollToPosition(0);
                 swipeView.scrollTo(0, 0);
                 searchQuery = intent.getStringExtra(SearchManager.QUERY);
                 actionBar.setSubtitle(searchQuery);

@@ -2,6 +2,7 @@ package me.shiro.chesto;
 
 import android.net.Uri;
 
+import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -22,12 +23,14 @@ public final class Danbooru {
     }
 
     private class Common {
-        public void into(Callback callback) {
+        public Call into(Callback callback) {
             Request request = new Request.Builder()
                     .url(builder.toString())
                     .build();
 
-            client.newCall(request).enqueue(callback);
+            Call call = client.newCall(request);
+            call.enqueue(callback);
+            return call;
         }
     }
 
@@ -53,24 +56,17 @@ public final class Danbooru {
         }
     }
 
-    public Tags tags() {
+    public TagSuggestion tagSuggestions() {
         builder.path("tags.json");
-        return new Tags();
+        return new TagSuggestion();
     }
 
-    public final class Tags extends Common {
-        public Danbooru.Tags nameMatches(final String tagName) {
+    public final class TagSuggestion extends Common {
+
+        public Danbooru.TagSuggestion nameMatches(final String tagName) {
             builder.appendQueryParameter("search[name_matches]", tagName + '*');
-            return this;
-        }
-
-        public Danbooru.Tags order(final String order) {
-            builder.appendQueryParameter("search[order]", order);
-            return this;
-        }
-
-        public Danbooru.Tags limit(final Integer limit) {
-            builder.appendQueryParameter("limit", limit.toString());
+            builder.appendQueryParameter("search[order]", "count");
+            builder.appendQueryParameter("limit", "10");
             return this;
         }
     }
