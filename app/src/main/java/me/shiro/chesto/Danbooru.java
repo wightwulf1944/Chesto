@@ -51,7 +51,7 @@ public final class Danbooru {
         }
 
         public Danbooru.Posts tags(String tags) {
-            builder.appendQueryParameter("tags", tags.replace(" ", "+"));
+            builder.appendQueryParameter("tags", tags);
             return this;
         }
     }
