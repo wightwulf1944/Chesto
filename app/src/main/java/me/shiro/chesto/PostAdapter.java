@@ -51,6 +51,7 @@ public class PostAdapter
                 .load(post.getPreviewFileUrl())
                 .error(R.drawable.ic_image_broken)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .dontAnimate()
                 .into(holder.mImageView);
     }
 

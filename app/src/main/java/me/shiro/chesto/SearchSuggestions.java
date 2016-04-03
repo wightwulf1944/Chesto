@@ -22,7 +22,7 @@ import okhttp3.Response;
  * Created by Shiro on 3/14/2016.
  * Handles search suggestions
  */
-public final class SearchSuggestions implements
+final class SearchSuggestions implements
         SearchView.OnSuggestionListener, SearchView.OnQueryTextListener, Callback {
 
     private static final String[] COLUMNS = new String[]{
@@ -40,7 +40,7 @@ public final class SearchSuggestions implements
     private String query;
     private Call suggestionCall;
 
-    public SearchSuggestions(final SearchView searchView, final Context context) {
+    SearchSuggestions(final SearchView searchView, final Context context) {
         this.searchView = searchView;
         this.adapter = new SimpleCursorAdapter(
                 context,
