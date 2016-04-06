@@ -1,4 +1,4 @@
-package me.shiro.chesto;
+package me.shiro.chesto.mainActivity;
 
 import android.content.Context;
 import android.database.MatrixCursor;
@@ -14,6 +14,10 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
 
+import me.shiro.chesto.Danbooru;
+import me.shiro.chesto.R;
+import me.shiro.chesto.Tag;
+import me.shiro.chesto.TagParser;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;

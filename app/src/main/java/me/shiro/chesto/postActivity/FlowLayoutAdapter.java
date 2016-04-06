@@ -1,4 +1,4 @@
-package me.shiro.chesto;
+package me.shiro.chesto.postActivity;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -6,44 +6,48 @@ import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import org.apmem.tools.layouts.FlowLayout;
 
+import me.shiro.chesto.mainActivity.MainActivity;
+import me.shiro.chesto.Post;
+import me.shiro.chesto.R;
+import me.shiro.chesto.Utils;
+
 /**
- * Created by Shiro on 3/10/2016.
- * Responsible for loading data into a flowlayout
+ * Created by Shiro on 4/6/2016.
+ * Adapter that takes a post and sets it's tags onto a FlowLayout
  */
-public class LoadIntoFlow {
+final class FlowLayoutAdapter {
 
     private static final int MARGIN = Utils.dpToPx(6);
     private static final int PADDING = Utils.dpToPx(2);
+
     private final FlowLayout layout;
     private final Context context;
     private String label;
     private int tagTextColor;
 
-    public static LoadIntoFlow layout(FlowLayout layout) {
-        return new LoadIntoFlow(layout);
-    }
-
-    private LoadIntoFlow(final FlowLayout layout) {
+    FlowLayoutAdapter(final FlowLayout layout, final Post post) {
         this.layout = layout;
         this.context = layout.getContext();
+
+        label = "Copyrights:";
+        tagTextColor = ContextCompat.getColor(context, R.color.copyrightTagText);
+        tags(post.getCopyrightTag());
+        label = "Characters:";
+        tagTextColor = ContextCompat.getColor(context, R.color.characterTagText);
+        tags(post.getCharacterTag());
+        label = "Artist:";
+        tagTextColor = ContextCompat.getColor(context, R.color.artistTagText);
+        tags(post.getArtistTag());
+        label = "Tags:";
+        tagTextColor = ContextCompat.getColor(context, R.color.generalTagText);
+        tags(post.getGeneralTag());
     }
 
-    public LoadIntoFlow label(final String label) {
-        this.label = label;
-        return this;
-    }
-
-    public LoadIntoFlow tagTextColor(final int colorId) {
-        tagTextColor = ContextCompat.getColor(context, colorId);
-        return this;
-    }
-
-    public LoadIntoFlow tags(final String[] tags) {
+    private void tags(final String[] tags) {
         if (tags != null && tags.length > 0) {
             layout.addView(view(label, true));
             for (final String tag : tags) {
@@ -63,7 +67,6 @@ public class LoadIntoFlow {
                 });
             }
         }
-        return this;
     }
 
     private TextView view(final String viewText, final boolean isNewLine) {

@@ -1,4 +1,4 @@
-package me.shiro.chesto;
+package me.shiro.chesto.mainActivity;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -15,6 +15,11 @@ import android.view.View;
 
 import com.fivehundredpx.greedolayout.GreedoLayoutManager;
 import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration;
+
+import me.shiro.chesto.PostAdapter;
+import me.shiro.chesto.PostList;
+import me.shiro.chesto.R;
+import me.shiro.chesto.Utils;
 
 public final class MainActivity extends AppCompatActivity {
 

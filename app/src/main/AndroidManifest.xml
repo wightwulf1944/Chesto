@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".MainActivity"
+            android:name=".mainActivity.MainActivity"
             android:configChanges="orientation|screenSize"
             android:launchMode="singleTask">
             <intent-filter>
@@ -31,12 +31,15 @@
         </activity>
 
         <activity
-            android:name=".PostActivity"
-            android:parentActivityName=".MainActivity">
+            android:name=".postActivity.PostActivity"
+            android:parentActivityName=".mainActivity.MainActivity"
+            android:theme="@style/AppTheme.Fullscreen">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".mainActivity.MainActivity" />
         </activity>
+
+        <service android:name=".ImageDownloadService" />
 
     </application>
 

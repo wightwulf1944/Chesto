@@ -42,11 +42,17 @@
             android:layout_height="@dimen/keyline"
             android:background="@color/colorPrimary" />
 
-        <org.apmem.tools.layouts.FlowLayout
-            android:id="@+id/bottomSheet"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white" />
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <org.apmem.tools.layouts.FlowLayout
+                android:id="@+id/bottomSheet"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white" />
+
+        </android.support.v4.widget.NestedScrollView>
 
     </LinearLayout>
 

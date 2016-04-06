@@ -1,6 +1,7 @@
 package me.shiro.chesto;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +11,13 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.fivehundredpx.greedolayout.GreedoLayoutSizeCalculator;
 
+import me.shiro.chesto.postActivity.PostActivity;
+
 /**
  * Created by Shiro on 2/23/2016.
  * PostAdapter
  */
-public class PostAdapter
+public final class PostAdapter
         extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         implements GreedoLayoutSizeCalculator.SizeCalculatorDelegate {
 
@@ -88,7 +91,9 @@ public class PostAdapter
 
         @Override
         public void onClick(View v) {
-            PostActivity.start(context, post);
+            Intent intent = new Intent(context, PostActivity.class);
+            intent.putExtra(PostActivity.POST, post);
+            context.startActivity(intent);
         }
     }
 }
