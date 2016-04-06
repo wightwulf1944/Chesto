@@ -8,7 +8,7 @@ import android.os.Parcelable;
  * Represents a single post
  * converted to parcelable by http://www.parcelabler.com/
  */
-public final class Post implements Parcelable {
+public class Post implements Parcelable {
 
     private final static String BASE_URL = "http://danbooru.donmai.us";
     private int id;
