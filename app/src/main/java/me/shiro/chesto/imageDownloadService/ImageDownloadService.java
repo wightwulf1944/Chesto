@@ -1,12 +1,10 @@
-package me.shiro.chesto;
+package me.shiro.chesto.imageDownloadService;
 
 import android.app.Service;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -18,23 +16,26 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 
+import me.shiro.chesto.Post;
+import me.shiro.chesto.Utils;
 import me.shiro.chesto.postActivity.PostActivity;
 
 /**
  * Created by Shiro on 4/6/2016.
  * Handles downloading images through glide
  */
-public class ImageDownloadService extends Service {
+public final class ImageDownloadService extends Service {
 
     private static final String TAG = ImageDownloadService.class.getName();
+    private static final File destinationPath = Utils.imageFileSaveDir();
 
-    private static final File destinationPath = Environment.getExternalStoragePublicDirectory(
-            Environment.DIRECTORY_PICTURES + "/Chesto/"
-    );
+    private DownloadStatusBroadcaster broadcaster;
 
     @Override
     public void onCreate() {
         Log.i(TAG, "ImageDownloadService created");
+
+        broadcaster = new DownloadStatusBroadcaster(this);
 
         if (!destinationPath.exists()) {
             destinationPath.mkdirs();
@@ -55,6 +56,8 @@ public class ImageDownloadService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         final Post post = intent.getParcelableExtra(PostActivity.POST);
+
+        broadcaster.broadcastStarted(post);
 
         Glide.with(this)
                 .load(post.getFileUrl())
@@ -80,23 +83,10 @@ public class ImageDownloadService extends Service {
                 intent.setData(fileUri);
                 sendBroadcast(intent);
 
-                View.OnClickListener listener = new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        final Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setDataAndType(fileUri, "image/*");
-                        startActivity(intent);
-                    }
-                };
-
-                Log.i(TAG, "Image successfully downloaded");
-//                Snackbar.make(imageView, "Image Saved", Snackbar.LENGTH_LONG)
-//                        .setAction("Open", listener)
-//                        .show();
-
+                broadcaster.broadcastFinished(post, fileUri);
             } catch (IOException e) {
-                Log.d("TEST", "Error saving image", e);
-//                Snackbar.make(imageView, "Error Saving Image", Snackbar.LENGTH_SHORT);
+                Log.d(TAG, "Error saving image", e);
+                broadcaster.broadcastError(post);
             }
         }
     }

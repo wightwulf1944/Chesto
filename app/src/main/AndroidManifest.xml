@@ -39,7 +39,7 @@
                 android:value=".mainActivity.MainActivity" />
         </activity>
 
-        <service android:name=".ImageDownloadService" />
+        <service android:name=".imageDownloadService.ImageDownloadService" />
 
     </application>
 
