@@ -54,7 +54,6 @@ public final class PostAdapter
                 .load(post.getPreviewFileUrl())
                 .error(R.drawable.ic_image_broken)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .dontAnimate()
                 .into(holder.mImageView);
     }
 
@@ -73,16 +72,15 @@ public final class PostAdapter
         }
     }
 
-    public final class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public final ImageView mImageView;
-        public Post post;
+    final class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        final ImageView mImageView;
+        Post post;
 
-        public ViewHolder(ImageView v) {
+        ViewHolder(ImageView v) {
             super(v);
             mImageView = v;
             mImageView.setOnClickListener(this);
-            mImageView.setBackgroundResource(R.color.lightBackground);
-            mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             mImageView.setLayoutParams(new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
