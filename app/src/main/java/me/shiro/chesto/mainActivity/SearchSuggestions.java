@@ -29,6 +29,7 @@ import okhttp3.Response;
 final class SearchSuggestions implements
         SearchView.OnSuggestionListener, SearchView.OnQueryTextListener, Callback {
 
+    private static final String TAG = SearchSuggestions.class.getName();
     private static final String[] COLUMNS = new String[]{
             "_ID",
             "SUGGEST_COLUMN_TEXT_1"
@@ -55,8 +56,8 @@ final class SearchSuggestions implements
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
         );
         searchView.setSuggestionsAdapter(adapter);
-        searchView.setOnQueryTextListener(this);
         searchView.setOnSuggestionListener(this);
+        searchView.setOnQueryTextListener(this);
     }
 
     @Override
@@ -106,7 +107,7 @@ final class SearchSuggestions implements
 
     @Override
     public void onFailure(Call call, IOException e) {
-        Log.w("TEST", "Did not fetch tag suggestions", e);
+        Log.w(TAG, "Did not fetch tag suggestions", e);
     }
 
     @Override
