@@ -1,6 +1,5 @@
 package me.shiro.chesto.postActivity;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -24,12 +23,10 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
-import org.apmem.tools.layouts.FlowLayout;
-
 import me.shiro.chesto.Const;
-import me.shiro.chesto.imageDownloadService.ImageDownloadService;
 import me.shiro.chesto.Post;
 import me.shiro.chesto.R;
+import me.shiro.chesto.imageDownloadService.ImageDownloadService;
 
 /**
  * Created by Shiro on 2/25/2016.
@@ -69,11 +66,15 @@ public final class PostActivity extends AppCompatActivity {
 
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                new PostBottomSheet(PostActivity.this, post).show();
-                return true;
+                if (e1.getY() > e2.getY() && Math.abs(velocityY) > 100) {
+                    PostBottomSheet.newInstance(post)
+                            .show(getSupportFragmentManager(), "bottomsheet");
+                    return true;
+                } else {
+                    return false;
+                }
             }
         });
-
 
         post = getIntent().getParcelableExtra(POST);
         imageView = (ImageView) findViewById(R.id.mainImageView);

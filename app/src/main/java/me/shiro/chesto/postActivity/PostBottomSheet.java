@@ -1,9 +1,17 @@
 package me.shiro.chesto.postActivity;
 
-import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.design.widget.BottomSheetDialogFragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import org.apmem.tools.layouts.FlowLayout;
 
@@ -11,24 +19,45 @@ import me.shiro.chesto.Post;
 import me.shiro.chesto.R;
 
 /**
- * Created by Shiro on 4/10/2016.
+ * Created by mzero on 4/10/2016.
  */
-class PostBottomSheet extends BottomSheetDialog {
+public final class PostBottomSheet extends BottomSheetDialogFragment {
 
-    private final Post post;
+    private static final String KEY_POST = PostBottomSheet.class.getName() + "POST";
 
-    public PostBottomSheet(@NonNull Activity context, @NonNull Post post) {
-        super(context);
-        setOwnerActivity(context);
-        this.post = post;
+    static PostBottomSheet newInstance(final Post post) {
+        PostBottomSheet instance = new PostBottomSheet();
+        Bundle args = new Bundle();
+        args.putParcelable(KEY_POST, post);
+        instance.setArguments(args);
+        return instance;
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_post_bottomsheet);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.dialog_post_bottomsheet, container, false);
 
-        final FlowLayout flowLayout = (FlowLayout) findViewById(R.id.flowLayout);
+        FlowLayout flowLayout = (FlowLayout) rootView.findViewById(R.id.flowLayout);
+        Post post = getArguments().getParcelable(KEY_POST);
         new FlowLayoutAdapter(flowLayout, post);
+
+        return rootView;
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        BottomSheetDialog dialog = new BottomSheetDialog(getActivity(), getTheme());
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                BottomSheetDialog d = (BottomSheetDialog) dialog;
+                FrameLayout bottomSheet = (FrameLayout) d.findViewById(android.support.design.R.id.design_bottom_sheet);
+                BottomSheetBehavior.from(bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
+        });
+
+        return dialog;
     }
 }
