@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -75,26 +76,26 @@ public final class MainActivity extends AppCompatActivity {
             }
         });
 
+        Log.d("TEST", "CREATED");
         handleIntent(getIntent());
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
+        Log.d("TEST", "NEW INTENT");
+        swipeView.setRefreshing(true);
+        recyclerView.scrollToPosition(0);
+        swipeView.scrollTo(0, 0);
+        searchViewItem.collapseActionView();
         handleIntent(intent);
     }
 
     private void handleIntent(Intent intent) {
-        swipeView.setRefreshing(true);
         switch (intent.getAction()) {
             case Intent.ACTION_SEARCH:
-                recyclerView.scrollToPosition(0);
-                swipeView.scrollTo(0, 0);
                 searchQuery = intent.getStringExtra(SearchManager.QUERY);
                 actionBar.setSubtitle(searchQuery);
                 postList.searchTags(searchQuery);
-                if (searchViewItem != null) {
-                    searchViewItem.collapseActionView();
-                }
                 break;
             default:
                 postList.searchTags("");
