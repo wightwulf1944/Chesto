@@ -12,6 +12,12 @@
         android:layout_marginBottom="@dimen/keyline"
         tools:ignore="ContentDescription" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/keyline"
+        android:layout_gravity="end|bottom"
+        android:background="@color/colorPrimary" />
+
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="match_parent"
