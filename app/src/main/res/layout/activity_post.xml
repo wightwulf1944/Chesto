@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -28,32 +27,5 @@
         android:layout_margin="@dimen/fabMargin"
         android:onClick="onDownloadButtonClicked"
         android:src="@drawable/ic_download" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:behavior_peekHeight="@dimen/keyline"
-        app:elevation="6dp"
-        app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/keyline"
-            android:background="@color/colorPrimary" />
-
-        <android.support.v4.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <org.apmem.tools.layouts.FlowLayout
-                android:id="@+id/bottomSheet"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/white" />
-
-        </android.support.v4.widget.NestedScrollView>
-
-    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

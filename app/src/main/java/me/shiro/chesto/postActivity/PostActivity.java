@@ -1,5 +1,6 @@
 package me.shiro.chesto.postActivity;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +9,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -35,6 +39,7 @@ public final class PostActivity extends AppCompatActivity {
 
     public static final String POST = "me.shiro.chesto.POST";
 
+    private GestureDetectorCompat gestureDetector;
     private Post post;
     private ImageView imageView;
     private DownloadStatusReciever reciever;
@@ -56,12 +61,23 @@ public final class PostActivity extends AppCompatActivity {
         filter = new IntentFilter(Const.IMAGE_DL_ERROR);
         broadcastManager.registerReceiver(reciever, filter);
 
+        gestureDetector = new GestureDetectorCompat(this, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDown(MotionEvent e) {
+                return true;
+            }
+
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                new PostBottomSheet(PostActivity.this, post).show();
+                return true;
+            }
+        });
+
+
         post = getIntent().getParcelableExtra(POST);
         imageView = (ImageView) findViewById(R.id.mainImageView);
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        final FlowLayout bottomSheet = (FlowLayout) findViewById(R.id.bottomSheet);
-
-        new FlowLayoutAdapter(bottomSheet, post);
 
         DrawableRequestBuilder thumbnail = Glide.with(this)
                 .load(post.getPreviewFileUrl())
@@ -94,6 +110,12 @@ public final class PostActivity extends AppCompatActivity {
     protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(reciever);
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        gestureDetector.onTouchEvent(event);
+        return super.onTouchEvent(event);
     }
 
     public void onDownloadButtonClicked(View view) {
