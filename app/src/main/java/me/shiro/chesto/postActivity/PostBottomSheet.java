@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 
 import org.apmem.tools.layouts.FlowLayout;
 
+import butterknife.ButterKnife;
 import me.shiro.chesto.Post;
 import me.shiro.chesto.R;
 
@@ -37,7 +38,7 @@ public final class PostBottomSheet extends BottomSheetDialogFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.dialog_post_bottomsheet, container, false);
 
-        FlowLayout flowLayout = (FlowLayout) rootView.findViewById(R.id.flowLayout);
+        FlowLayout flowLayout = ButterKnife.findById(rootView, R.id.flowLayout);
         Post post = getArguments().getParcelable(KEY_POST);
         new FlowLayoutAdapter(flowLayout, post);
 
@@ -53,7 +54,7 @@ public final class PostBottomSheet extends BottomSheetDialogFragment {
             @Override
             public void onShow(DialogInterface dialog) {
                 BottomSheetDialog d = (BottomSheetDialog) dialog;
-                FrameLayout bottomSheet = (FrameLayout) d.findViewById(android.support.design.R.id.design_bottom_sheet);
+                FrameLayout bottomSheet = ButterKnife.findById(d, R.id.design_bottom_sheet);
                 BottomSheetBehavior.from(bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
             }
         });

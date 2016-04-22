@@ -23,6 +23,8 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import me.shiro.chesto.Const;
 import me.shiro.chesto.Post;
 import me.shiro.chesto.R;
@@ -36,15 +38,16 @@ public final class PostActivity extends AppCompatActivity {
 
     public static final String POST = "me.shiro.chesto.POST";
 
+    @Bind(R.id.mainImageView) ImageView imageView;
     private GestureDetectorCompat gestureDetector;
     private Post post;
-    private ImageView imageView;
     private DownloadStatusReciever reciever;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
+        ButterKnife.bind(this);
 
         final LocalBroadcastManager broadcastManager =
                 LocalBroadcastManager.getInstance(PostActivity.this);
@@ -77,8 +80,7 @@ public final class PostActivity extends AppCompatActivity {
         });
 
         post = getIntent().getParcelableExtra(POST);
-        imageView = (ImageView) findViewById(R.id.mainImageView);
-        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        final ProgressBar progressBar = ButterKnife.findById(this, R.id.progressBar);
 
         DrawableRequestBuilder thumbnail = Glide.with(this)
                 .load(post.getPreviewFileUrl())

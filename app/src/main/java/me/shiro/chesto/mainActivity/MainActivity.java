@@ -17,6 +17,8 @@ import android.view.View;
 import com.fivehundredpx.greedolayout.GreedoLayoutManager;
 import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import me.shiro.chesto.PostAdapter;
 import me.shiro.chesto.PostList;
 import me.shiro.chesto.R;
@@ -25,25 +27,24 @@ import me.shiro.chesto.Utils;
 public final class MainActivity extends AppCompatActivity {
 
     private final PostList postList = PostList.getInstance();
-    private SwipeRefreshLayout swipeView;
-    private RecyclerView recyclerView;
     private MenuItem searchViewItem;
-    private Toolbar actionBar;
+    @Bind(R.id.actionBar) Toolbar actionBar;
+    @Bind(R.id.swipeLayout) SwipeRefreshLayout swipeView;
+    @Bind(R.id.recyclerView) RecyclerView recyclerView;
     private String searchQuery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
-        actionBar = (Toolbar) findViewById(R.id.actionBar);
         setSupportActionBar(actionBar);
         Utils.appContext = getApplicationContext();
-        swipeView = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+
         final PostAdapter postAdapter = new PostAdapter(postList);
         final GreedoLayoutManager layoutManager = new GreedoLayoutManager(postAdapter);
-        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        final RecyclerView recyclerView = ButterKnife.findById(this, R.id.recyclerView);
 
         postList.registerSwipeRefreshLayout(swipeView);
 
