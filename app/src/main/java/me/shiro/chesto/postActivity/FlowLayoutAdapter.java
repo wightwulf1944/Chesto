@@ -23,6 +23,10 @@ final class FlowLayoutAdapter {
 
     private static final int MARGIN = Utils.dpToPx(6);
     private static final int PADDING = Utils.dpToPx(2);
+    private static final int copyrightTagTextColor = Utils.color(R.color.copyrightTagText);
+    private static final int characterTagTextColor = Utils.color(R.color.characterTagText);
+    private static final int artistTagTextColor = Utils.color(R.color.artistTagText);
+    private static final int generalTagTextColor = Utils.color(R.color.generalTagText);
 
     private final FlowLayout layout;
     private final Context context;
@@ -34,16 +38,16 @@ final class FlowLayoutAdapter {
         this.context = layout.getContext();
 
         label = "Copyrights:";
-        tagTextColor = ContextCompat.getColor(context, R.color.copyrightTagText);
+        tagTextColor = copyrightTagTextColor;
         tags(post.getCopyrightTag());
         label = "Characters:";
-        tagTextColor = ContextCompat.getColor(context, R.color.characterTagText);
+        tagTextColor = characterTagTextColor;
         tags(post.getCharacterTag());
         label = "Artist:";
-        tagTextColor = ContextCompat.getColor(context, R.color.artistTagText);
+        tagTextColor = artistTagTextColor;
         tags(post.getArtistTag());
         label = "Tags:";
-        tagTextColor = ContextCompat.getColor(context, R.color.generalTagText);
+        tagTextColor = generalTagTextColor;
         tags(post.getGeneralTag());
     }
 

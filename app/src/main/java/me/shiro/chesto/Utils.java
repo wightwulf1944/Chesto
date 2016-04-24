@@ -2,6 +2,7 @@ package me.shiro.chesto;
 
 import android.content.Context;
 import android.os.Environment;
+import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 
 import java.io.File;
@@ -28,5 +29,9 @@ public final class Utils {
         return Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES + "/Chesto/"
         );
+    }
+
+    public static int color(int colorId) {
+        return ContextCompat.getColor(appContext, colorId);
     }
 }
