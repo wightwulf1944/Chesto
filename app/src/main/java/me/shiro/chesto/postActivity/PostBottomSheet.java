@@ -18,6 +18,7 @@ import org.apmem.tools.layouts.FlowLayout;
 import butterknife.ButterKnife;
 import me.shiro.chesto.Post;
 import me.shiro.chesto.R;
+import me.shiro.chesto.Utils;
 
 /**
  * Created by mzero on 4/10/2016.
@@ -55,7 +56,9 @@ public final class PostBottomSheet extends BottomSheetDialogFragment {
             public void onShow(DialogInterface dialog) {
                 BottomSheetDialog d = (BottomSheetDialog) dialog;
                 FrameLayout bottomSheet = ButterKnife.findById(d, R.id.design_bottom_sheet);
-                BottomSheetBehavior.from(bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
+                BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                bottomSheetBehavior.setPeekHeight(Utils.dpToPx(8));
             }
         });
 
