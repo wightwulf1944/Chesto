@@ -41,7 +41,7 @@ public final class PostActivity extends AppCompatActivity {
     @Bind(R.id.mainImageView) ImageView imageView;
     private GestureDetectorCompat gestureDetector;
     private Post post;
-    private DownloadStatusReciever reciever;
+    private DownloadStatusReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,15 +51,15 @@ public final class PostActivity extends AppCompatActivity {
 
         final LocalBroadcastManager broadcastManager =
                 LocalBroadcastManager.getInstance(PostActivity.this);
-        reciever = new DownloadStatusReciever();
+        receiver = new DownloadStatusReceiver();
         IntentFilter filter;
         filter = new IntentFilter(Const.IMAGE_DL_START);
-        broadcastManager.registerReceiver(reciever, filter);
+        broadcastManager.registerReceiver(receiver, filter);
         filter = new IntentFilter(Const.IMAGE_DL_FINISH);
         filter.addDataScheme("file");
-        broadcastManager.registerReceiver(reciever, filter);
+        broadcastManager.registerReceiver(receiver, filter);
         filter = new IntentFilter(Const.IMAGE_DL_ERROR);
-        broadcastManager.registerReceiver(reciever, filter);
+        broadcastManager.registerReceiver(receiver, filter);
 
         gestureDetector = new GestureDetectorCompat(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
@@ -111,7 +111,7 @@ public final class PostActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(reciever);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
         super.onDestroy();
     }
 
@@ -127,7 +127,7 @@ public final class PostActivity extends AppCompatActivity {
         startService(intent);
     }
 
-    private class DownloadStatusReciever extends BroadcastReceiver {
+    private class DownloadStatusReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
