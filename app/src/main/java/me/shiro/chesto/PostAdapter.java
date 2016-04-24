@@ -26,14 +26,10 @@ public final class PostAdapter
     private Context context;
     private final PostList postList;
 
-    public PostAdapter(PostList postList) {
+    public PostAdapter(Context context, PostList postList) {
+        this.context = context;
         this.postList = postList;
         postList.registerPostAdapter(this);
-    }
-
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        context = recyclerView.getContext();
     }
 
     @Override
@@ -79,12 +75,12 @@ public final class PostAdapter
         ViewHolder(ImageView v) {
             super(v);
             mImageView = v;
-            mImageView.setOnClickListener(this);
             mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             mImageView.setLayoutParams(new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
             ));
+            mImageView.setOnClickListener(this);
         }
 
         @Override

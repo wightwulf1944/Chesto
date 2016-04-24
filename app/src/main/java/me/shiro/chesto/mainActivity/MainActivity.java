@@ -42,7 +42,7 @@ public final class MainActivity extends AppCompatActivity {
         setSupportActionBar(actionBar);
         Utils.appContext = getApplicationContext();
 
-        final PostAdapter postAdapter = new PostAdapter(postList);
+        final PostAdapter postAdapter = new PostAdapter(this, postList);
         final GreedoLayoutManager layoutManager = new GreedoLayoutManager(postAdapter);
         final RecyclerView recyclerView = ButterKnife.findById(this, R.id.recyclerView);
 
