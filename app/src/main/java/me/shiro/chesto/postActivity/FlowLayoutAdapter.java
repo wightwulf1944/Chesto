@@ -3,17 +3,16 @@ package me.shiro.chesto.postActivity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.apmem.tools.layouts.FlowLayout;
 
-import me.shiro.chesto.mainActivity.MainActivity;
 import me.shiro.chesto.Post;
 import me.shiro.chesto.R;
 import me.shiro.chesto.Utils;
+import me.shiro.chesto.mainActivity.MainActivity;
 
 /**
  * Created by Shiro on 4/6/2016.

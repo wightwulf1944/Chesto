@@ -8,10 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -23,8 +20,8 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import org.apmem.tools.layouts.FlowLayout;
+
 import me.shiro.chesto.Const;
 import me.shiro.chesto.Post;
 import me.shiro.chesto.R;
@@ -38,8 +35,8 @@ public final class PostActivity extends AppCompatActivity {
 
     public static final String POST = "me.shiro.chesto.POST";
 
-    @Bind(R.id.mainImageView) ImageView imageView;
-    private GestureDetectorCompat gestureDetector;
+    private ImageView imageView;
+    private FlowLayout flowLayout;
     private Post post;
     private DownloadStatusReceiver receiver;
 
@@ -47,7 +44,8 @@ public final class PostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
-        ButterKnife.bind(this);
+        imageView = (ImageView) findViewById(R.id.mainImageView);
+        flowLayout = (FlowLayout) findViewById(R.id.flowLayout);
 
         final LocalBroadcastManager broadcastManager =
                 LocalBroadcastManager.getInstance(PostActivity.this);
@@ -61,31 +59,13 @@ public final class PostActivity extends AppCompatActivity {
         filter = new IntentFilter(Const.IMAGE_DL_ERROR);
         broadcastManager.registerReceiver(receiver, filter);
 
-        gestureDetector = new GestureDetectorCompat(this, new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onDown(MotionEvent e) {
-                return true;
-            }
-
-            @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                if (e1.getY() > e2.getY() && Math.abs(velocityY) > 100) {
-                    PostBottomSheet.newInstance(post)
-                            .show(getSupportFragmentManager(), "bottomsheet");
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
-
         post = getIntent().getParcelableExtra(POST);
-        final ProgressBar progressBar = ButterKnife.findById(this, R.id.progressBar);
 
         DrawableRequestBuilder thumbnail = Glide.with(this)
                 .load(post.getPreviewFileUrl())
                 .fitCenter();
 
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         RequestListener<String, GlideDrawable> listener = new RequestListener<String, GlideDrawable>() {
             @Override
             public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
@@ -107,18 +87,14 @@ public final class PostActivity extends AppCompatActivity {
                 .listener(listener)
                 .thumbnail(thumbnail)
                 .into(imageView);
+
+        new FlowLayoutAdapter(flowLayout, post);
     }
 
     @Override
     protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
         super.onDestroy();
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        gestureDetector.onTouchEvent(event);
-        return super.onTouchEvent(event);
     }
 
     public void onDownloadButtonClicked(View view) {

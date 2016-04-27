@@ -134,7 +134,7 @@ public final class Post implements Parcelable {
     }
 
     // Auto-generated code by http://www.parcelabler.com/
-    protected Post(Parcel in) {
+    private Post(Parcel in) {
         id = in.readInt();
         imageWidth = in.readInt();
         imageHeight = in.readInt();

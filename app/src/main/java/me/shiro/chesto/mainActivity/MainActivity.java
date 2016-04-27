@@ -17,8 +17,6 @@ import android.view.View;
 import com.fivehundredpx.greedolayout.GreedoLayoutManager;
 import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
 import me.shiro.chesto.PostAdapter;
 import me.shiro.chesto.PostList;
 import me.shiro.chesto.R;
@@ -28,23 +26,22 @@ public final class MainActivity extends AppCompatActivity {
 
     private final PostList postList = PostList.getInstance();
     private MenuItem searchViewItem;
-    @Bind(R.id.actionBar) Toolbar actionBar;
-    @Bind(R.id.swipeLayout) SwipeRefreshLayout swipeView;
-    @Bind(R.id.recyclerView) RecyclerView recyclerView;
+    private Toolbar actionBar;
+    private SwipeRefreshLayout swipeView;
+    private RecyclerView recyclerView;
     private String searchQuery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //TODO: move to application class
+        Utils.appContext = getApplicationContext();
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+        actionBar = (Toolbar) findViewById(R.id.actionBar);
+        swipeView = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
         setSupportActionBar(actionBar);
-        Utils.appContext = getApplicationContext();
-
-        final PostAdapter postAdapter = new PostAdapter(this, postList);
-        final GreedoLayoutManager layoutManager = new GreedoLayoutManager(postAdapter);
-        final RecyclerView recyclerView = ButterKnife.findById(this, R.id.recyclerView);
 
         postList.registerSwipeRefreshLayout(swipeView);
 
@@ -56,9 +53,12 @@ public final class MainActivity extends AppCompatActivity {
             }
         });
 
+        final PostAdapter postAdapter = new PostAdapter(this, postList);
+        final GreedoLayoutManager layoutManager = new GreedoLayoutManager(postAdapter);
         final int maxRowHeight = getResources().getDisplayMetrics().heightPixels / 3;
         layoutManager.setMaxRowHeight(maxRowHeight);
 
+        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         final int spacing = Utils.dpToPx(4);
         recyclerView.addItemDecoration(new GreedoSpacingItemDecoration(spacing));
         recyclerView.setHasFixedSize(true);
