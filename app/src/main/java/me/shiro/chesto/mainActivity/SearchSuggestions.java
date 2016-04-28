@@ -3,7 +3,6 @@ package me.shiro.chesto.mainActivity;
 import android.content.Context;
 import android.database.MatrixCursor;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.widget.SearchView;
 import android.util.JsonReader;
@@ -14,6 +13,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
 
+import me.shiro.chesto.ChestoApplication;
 import me.shiro.chesto.Danbooru;
 import me.shiro.chesto.R;
 import me.shiro.chesto.Tag;
@@ -30,6 +30,7 @@ final class SearchSuggestions implements
         SearchView.OnSuggestionListener, SearchView.OnQueryTextListener, Callback {
 
     private static final String TAG = SearchSuggestions.class.getName();
+    private static final Handler handler = ChestoApplication.getMainThreadHandler();
     private static final String[] COLUMNS = new String[]{
             "_ID",
             "SUGGEST_COLUMN_TEXT_1"
@@ -38,7 +39,6 @@ final class SearchSuggestions implements
             0,
             R.id.tagSuggestion
     };
-    private static final android.os.Handler handler = new Handler(Looper.getMainLooper());
     private final SearchView searchView;
     private final SimpleCursorAdapter adapter;
     private List<Tag> suggestedTags;

@@ -34,8 +34,6 @@ public final class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //TODO: move to application class
-        Utils.appContext = getApplicationContext();
         setContentView(R.layout.activity_main);
         actionBar = (Toolbar) findViewById(R.id.actionBar);
         swipeView = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
