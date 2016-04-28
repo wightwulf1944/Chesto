@@ -13,7 +13,7 @@ import java.io.File;
  */
 public final class Utils {
 
-    private static Context appContext = ChestoApplication.getInstance();
+    private static Context appContext = ChestoApplication.getContext();
 
     public static int pxToDp(int px) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, px,

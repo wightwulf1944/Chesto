@@ -1,7 +1,5 @@
 package me.shiro.chesto;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.JsonReader;
 import android.util.Log;
@@ -20,11 +18,11 @@ import okhttp3.Response;
  * Created by Shiro on 2/26/2016.
  * List class that handles fetching and merging Post lists
  */
-public final class PostList extends ArrayList<Post> {
+public final class PostList extends ArrayList<Post> implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = PostList.class.getSimpleName();
     private static final int REQUEST_POST_COUNT = 50;
-    private static final android.os.Handler handler = new Handler(Looper.getMainLooper());
+    private static final android.os.Handler handler = ChestoApplication.getMainThreadHandler();
     private static PostList instance;
 
     private PostAdapter adapter;
@@ -119,7 +117,8 @@ public final class PostList extends ArrayList<Post> {
                 });
     }
 
-    public void refresh() {
+    @Override
+    public void onRefresh() {
         new Danbooru()
                 .posts()
                 .page(1)

@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,12 +43,7 @@ public final class MainActivity extends AppCompatActivity {
         postList.registerSwipeRefreshLayout(swipeView);
 
         swipeView.setColorSchemeColors(R.color.colorPrimaryDark);
-        swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                postList.refresh();
-            }
-        });
+        swipeView.setOnRefreshListener(postList);
 
         final PostAdapter postAdapter = new PostAdapter(this, postList);
         final GreedoLayoutManager layoutManager = new GreedoLayoutManager(postAdapter);
@@ -75,13 +69,11 @@ public final class MainActivity extends AppCompatActivity {
             }
         });
 
-        Log.d("TEST", "CREATED");
         handleIntent(getIntent());
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
-        Log.d("TEST", "NEW INTENT");
         swipeView.setRefreshing(true);
         recyclerView.scrollToPosition(0);
         swipeView.scrollTo(0, 0);
