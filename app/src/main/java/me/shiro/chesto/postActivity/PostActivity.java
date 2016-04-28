@@ -6,11 +6,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.bumptech.glide.DrawableRequestBuilder;
@@ -37,6 +39,7 @@ public final class PostActivity extends AppCompatActivity {
 
     private ImageView imageView;
     private FlowLayout flowLayout;
+    private BottomSheetBehavior bottomSheetBehavior;
     private Post post;
     private DownloadStatusReceiver receiver;
 
@@ -46,6 +49,9 @@ public final class PostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post);
         imageView = (ImageView) findViewById(R.id.mainImageView);
         flowLayout = (FlowLayout) findViewById(R.id.flowLayout);
+
+        final LinearLayout bottomSheet = (LinearLayout) findViewById(R.id.bottomSheet);
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
 
         final LocalBroadcastManager broadcastManager =
                 LocalBroadcastManager.getInstance(PostActivity.this);
@@ -95,6 +101,15 @@ public final class PostActivity extends AppCompatActivity {
     protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
         super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     public void onDownloadButtonClicked(View view) {
