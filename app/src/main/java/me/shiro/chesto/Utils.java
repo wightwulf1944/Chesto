@@ -13,7 +13,7 @@ import java.io.File;
  */
 public final class Utils {
 
-    private static Context appContext = ChestoApplication.getContext();
+    private static final Context appContext = ChestoApplication.getContext();
 
     public static int pxToDp(int px) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, px,
@@ -23,12 +23,6 @@ public final class Utils {
     public static int dpToPx(float dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 appContext.getResources().getDisplayMetrics());
-    }
-
-    public static File imageFileSaveDir() {
-        return Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES + "/Chesto/"
-        );
     }
 
     public static int color(int colorId) {

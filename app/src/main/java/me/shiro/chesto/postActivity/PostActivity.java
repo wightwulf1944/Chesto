@@ -25,8 +25,8 @@ import com.bumptech.glide.request.target.Target;
 import org.apmem.tools.layouts.FlowLayout;
 
 import me.shiro.chesto.Const;
-import me.shiro.chesto.Post;
 import me.shiro.chesto.R;
+import me.shiro.chesto.danbooruRetrofit.Post;
 import me.shiro.chesto.imageDownloadService.ImageDownloadService;
 
 /**
@@ -38,7 +38,6 @@ public final class PostActivity extends AppCompatActivity {
     public static final String POST = "me.shiro.chesto.POST";
 
     private ImageView imageView;
-    private FlowLayout flowLayout;
     private BottomSheetBehavior bottomSheetBehavior;
     private Post post;
     private DownloadStatusReceiver receiver;
@@ -48,7 +47,6 @@ public final class PostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
         imageView = (ImageView) findViewById(R.id.mainImageView);
-        flowLayout = (FlowLayout) findViewById(R.id.flowLayout);
 
         final LinearLayout bottomSheet = (LinearLayout) findViewById(R.id.bottomSheet);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
@@ -94,6 +92,7 @@ public final class PostActivity extends AppCompatActivity {
                 .thumbnail(thumbnail)
                 .into(imageView);
 
+        final FlowLayout flowLayout = (FlowLayout) findViewById(R.id.flowLayout);
         new FlowLayoutAdapter(flowLayout, post);
     }
 

@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
 
 import me.shiro.chesto.Const;
-import me.shiro.chesto.Post;
+import me.shiro.chesto.danbooruRetrofit.Post;
 
 /**
  * Created by Shiro on 4/7/2016.

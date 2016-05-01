@@ -1,22 +1,21 @@
 package me.shiro.chesto;
 
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.JsonReader;
 import android.util.Log;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
+import me.shiro.chesto.danbooruRetrofit.Danbooru;
+import me.shiro.chesto.danbooruRetrofit.Post;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Shiro on 2/26/2016.
- * List class that handles fetching and merging Post lists
+ * List class that handles fetching and merging  lists
  */
 public final class PostList extends ArrayList<Post> implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -57,25 +56,12 @@ public final class PostList extends ArrayList<Post> implements SwipeRefreshLayou
     }
 
     public void requestMorePosts() {
-        new Danbooru()
-                .posts()
-                .page(++currentPage)
-                .limit(REQUEST_POST_COUNT)
-                .tags(tags)
-                .into(new Callback() {
+        Danbooru.api
+                .getPosts(tags, ++currentPage)
+                .enqueue(new Callback<List<Post>>() {
                     @Override
-                    public void onFailure(Call call, IOException e) {
-                        Log.e(TAG, "Error fetching more posts", e);
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        if (!response.isSuccessful()) {
-                            throw new IOException("Unexpected code " + response);
-                        }
-                        Reader reader = response.body().charStream();
-                        JsonReader jsonReader = new JsonReader(reader);
-                        List<Post> newPostList = PostParser.parsePage(jsonReader);
+                    public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                        final List<Post> newPostList = response.body();
 
                         if (isEmpty()) {
                             if (!newPostList.isEmpty()) {
@@ -114,30 +100,22 @@ public final class PostList extends ArrayList<Post> implements SwipeRefreshLayou
                             }
                         });
                     }
+
+                    @Override
+                    public void onFailure(Call<List<Post>> call, Throwable t) {
+                        Log.e(TAG, "Error fetching more posts", t);
+                    }
                 });
     }
 
     @Override
     public void onRefresh() {
-        new Danbooru()
-                .posts()
-                .page(1)
-                .limit(REQUEST_POST_COUNT)
-                .tags(tags)
-                .into(new Callback() {
+        Danbooru.api
+                .getPosts(tags, 1)
+                .enqueue(new Callback<List<Post>>() {
                     @Override
-                    public void onFailure(Call call, IOException e) {
-                        Log.e(TAG, "Error trying to refresh posts", e);
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        if (!response.isSuccessful()) {
-                            throw new IOException("Unexpected code " + response);
-                        }
-                        final Reader reader = response.body().charStream();
-                        final JsonReader jsonReader = new JsonReader(reader);
-                        final List<Post> newPostList = PostParser.parsePage(jsonReader);
+                    public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                        final List<Post> newPostList = response.body();
 
                         filterInvalid(newPostList.iterator());
 
@@ -165,11 +143,16 @@ public final class PostList extends ArrayList<Post> implements SwipeRefreshLayou
                             }
                         });
                     }
+
+                    @Override
+                    public void onFailure(Call<List<Post>> call, Throwable t) {
+                        Log.e(TAG, "Error trying to refresh posts", t);
+                    }
                 });
     }
 
     // Removes posts with no preview url
-    private void filterInvalid(Iterator<Post> i) {
+    private static void filterInvalid(Iterator<Post> i) {
         while (i.hasNext()) {
             if (i.next().getPreviewFileUrl() == null) {
                 i.remove();

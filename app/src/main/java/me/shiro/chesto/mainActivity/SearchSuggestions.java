@@ -5,29 +5,25 @@ import android.database.MatrixCursor;
 import android.os.Handler;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.widget.SearchView;
-import android.util.JsonReader;
 import android.util.Log;
 import android.widget.CursorAdapter;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.util.List;
 
 import me.shiro.chesto.ChestoApplication;
-import me.shiro.chesto.Danbooru;
 import me.shiro.chesto.R;
-import me.shiro.chesto.Tag;
-import me.shiro.chesto.TagParser;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
+import me.shiro.chesto.danbooruRetrofit.Danbooru;
+import me.shiro.chesto.danbooruRetrofit.Tag;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Shiro on 3/14/2016.
  * Handles search suggestions
  */
 final class SearchSuggestions implements
-        SearchView.OnSuggestionListener, SearchView.OnQueryTextListener, Callback {
+        SearchView.OnSuggestionListener, SearchView.OnQueryTextListener, Callback<List<Tag>> {
 
     private static final String TAG = SearchSuggestions.class.getName();
     private static final Handler handler = ChestoApplication.getMainThreadHandler();
@@ -43,7 +39,7 @@ final class SearchSuggestions implements
     private final SimpleCursorAdapter adapter;
     private List<Tag> suggestedTags;
     private String query;
-    private Call suggestionCall;
+    private Call<List<Tag>> suggestionCall;
 
     SearchSuggestions(final SearchView searchView, final Context context) {
         this.searchView = searchView;
@@ -70,7 +66,7 @@ final class SearchSuggestions implements
         final Tag selectedSuggestion = suggestedTags.get(position);
         final String newQuery = searchView.getQuery()
                 .toString()
-                .replace(query, selectedSuggestion.tagName);
+                .replace(query, selectedSuggestion.getName());
         searchView.setQuery(newQuery, false);
         return true;
     }
@@ -95,10 +91,9 @@ final class SearchSuggestions implements
         }
 
         if (query.length() > 1) {
-            suggestionCall = new Danbooru()
-                    .tagSuggestions()
-                    .nameMatches(query)
-                    .into(this);
+            suggestionCall = Danbooru.api
+                    .getTags(query + "*");
+            suggestionCall.enqueue(this);
             return true;
         } else {
             return false;
@@ -106,30 +101,27 @@ final class SearchSuggestions implements
     }
 
     @Override
-    public void onFailure(Call call, IOException e) {
-        Log.w(TAG, "Did not fetch tag suggestions", e);
-    }
+    public void onResponse(Call<List<Tag>> call, Response<List<Tag>> response) {
+        final Call<List<Tag>> thisCall = call;
 
-    @Override
-    public void onResponse(Call call, Response response) throws IOException {
-        final Call thisCall = call;
-        if (!response.isSuccessful()) {
-            throw new IOException("Unexpected code " + response);
-        }
-        Reader reader = response.body().charStream();
-        JsonReader jsonReader = new JsonReader(reader);
-        suggestedTags = TagParser.parsePage(jsonReader);
+        suggestedTags = response.body();
+
         handler.post(new Runnable() {
             @Override
             public void run() {
                 final MatrixCursor cursor = new MatrixCursor(COLUMNS);
                 for (Tag tag : suggestedTags) {
-                    cursor.newRow().add(tag.id).add(tag.tagName);
+                    cursor.newRow().add(tag.getId()).add(tag.getName());
                 }
                 if (!thisCall.isCanceled()) {
                     adapter.changeCursor(cursor);
                 }
             }
         });
+    }
+
+    @Override
+    public void onFailure(Call<List<Tag>> call, Throwable t) {
+        Log.w(TAG, "Did not fetch tag suggestions", t);
     }
 }

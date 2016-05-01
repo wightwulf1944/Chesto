@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.fivehundredpx.greedolayout.GreedoLayoutSizeCalculator;
 
+import me.shiro.chesto.danbooruRetrofit.Post;
 import me.shiro.chesto.postActivity.PostActivity;
 
 /**

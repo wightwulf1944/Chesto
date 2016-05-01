@@ -9,9 +9,9 @@ import android.widget.TextView;
 
 import org.apmem.tools.layouts.FlowLayout;
 
-import me.shiro.chesto.Post;
 import me.shiro.chesto.R;
 import me.shiro.chesto.Utils;
+import me.shiro.chesto.danbooruRetrofit.Post;
 import me.shiro.chesto.mainActivity.MainActivity;
 
 /**
@@ -38,37 +38,39 @@ final class FlowLayoutAdapter {
 
         label = "Copyrights:";
         tagTextColor = copyrightTagTextColor;
-        tags(post.getCopyrightTag());
+        tags(post.getTagStringCopyright());
         label = "Characters:";
         tagTextColor = characterTagTextColor;
-        tags(post.getCharacterTag());
+        tags(post.getTagStringCharacter());
         label = "Artist:";
         tagTextColor = artistTagTextColor;
-        tags(post.getArtistTag());
+        tags(post.getTagStringArtist());
         label = "Tags:";
         tagTextColor = generalTagTextColor;
-        tags(post.getGeneralTag());
+        tags(post.getTagStringGeneral());
     }
 
-    private void tags(final String[] tags) {
-        if (tags != null && tags.length > 0) {
-            layout.addView(view(label, true));
-            for (final String tag : tags) {
-                TextView tagView = view(tag, false);
-                tagView.setTextColor(tagTextColor);
-                tagView.setBackgroundResource(R.drawable.bg_tagview);
-                layout.addView(tagView);
+    private void tags(final String tags) {
+        if(tags.isEmpty()) {
+            return;
+        }
 
-                tagView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(context, MainActivity.class);
-                        intent.setAction(Intent.ACTION_SEARCH);
-                        intent.putExtra(SearchManager.QUERY, tag);
-                        context.startActivity(intent);
-                    }
-                });
-            }
+        layout.addView(view(label, true));
+        for (final String tag : tags.split(" ")) {
+            TextView tagView = view(tag, false);
+            tagView.setTextColor(tagTextColor);
+            tagView.setBackgroundResource(R.drawable.bg_tagview);
+            layout.addView(tagView);
+
+            tagView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, MainActivity.class);
+                    intent.setAction(Intent.ACTION_SEARCH);
+                    intent.putExtra(SearchManager.QUERY, tag);
+                    context.startActivity(intent);
+                }
+            });
         }
     }
 

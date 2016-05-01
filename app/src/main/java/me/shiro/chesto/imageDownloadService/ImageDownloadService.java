@@ -3,6 +3,7 @@ package me.shiro.chesto.imageDownloadService;
 import android.app.Service;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -16,8 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 
-import me.shiro.chesto.Post;
-import me.shiro.chesto.Utils;
+import me.shiro.chesto.danbooruRetrofit.Post;
 import me.shiro.chesto.postActivity.PostActivity;
 
 /**
@@ -27,9 +27,32 @@ import me.shiro.chesto.postActivity.PostActivity;
 public final class ImageDownloadService extends Service {
 
     private static final String TAG = ImageDownloadService.class.getName();
-    private static final File destinationPath = Utils.imageFileSaveDir();
+    private static final File destinationPath = imageFileSaveDir();
 
     private DownloadStatusBroadcaster broadcaster;
+
+    private static File saveImage(File sourceFile, String name) throws IOException {
+
+        File destFile = new File(destinationPath, name);
+
+        FileChannel inChannel = new FileInputStream(sourceFile).getChannel();
+        FileChannel outChannel = new FileOutputStream(destFile).getChannel();
+        try {
+            inChannel.transferTo(0, inChannel.size(), outChannel);
+        } finally {
+            if (inChannel != null)
+                inChannel.close();
+            if (outChannel != null)
+                outChannel.close();
+        }
+        return destFile;
+    }
+
+    public static File imageFileSaveDir() {
+        return Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES + "/Chesto/"
+        );
+    }
 
     @Override
     public void onCreate() {
@@ -77,7 +100,7 @@ public final class ImageDownloadService extends Service {
         @Override
         public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
             try {
-                final File file = saveImage(resource, post.getId() + post.getFileExt());
+                final File file = saveImage(resource, post.getFileName());
                 final Uri fileUri = Uri.fromFile(file);
                 final Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                 intent.setData(fileUri);
@@ -89,22 +112,5 @@ public final class ImageDownloadService extends Service {
                 broadcaster.broadcastError(post);
             }
         }
-    }
-
-    private static File saveImage(File sourceFile, String name) throws IOException {
-
-        File destFile = new File(destinationPath, name);
-
-        FileChannel inChannel = new FileInputStream(sourceFile).getChannel();
-        FileChannel outChannel = new FileOutputStream(destFile).getChannel();
-        try {
-            inChannel.transferTo(0, inChannel.size(), outChannel);
-        } finally {
-            if (inChannel != null)
-                inChannel.close();
-            if (outChannel != null)
-                outChannel.close();
-        }
-        return destFile;
     }
 }
