@@ -92,7 +92,7 @@ final class SearchSuggestions implements
 
         if (query.length() > 1) {
             suggestionCall = Danbooru.api
-                    .getTags(query + "*");
+                    .searchTags(query + "*");
             suggestionCall.enqueue(this);
             return true;
         } else {

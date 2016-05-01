@@ -24,5 +24,9 @@ public interface Danbooru {
     Call<List<Post>> getPosts(@Query("tags") String tags, @Query("page") int page);
 
     @GET("tags.json?search[order]=count")
-    Call<List<Tag>> getTags(@Query("search[name_matches]") String tags);
+    Call<List<Tag>> searchTags(@Query("search[name_matches]") String tags);
+
+    // TODO: use this to get tag post count
+    @GET("tags.json")
+    Call<List<Tag>> getTags(@Query("search[name]") String tags);
 }

@@ -16,6 +16,8 @@ public class Post implements Parcelable {
     private int imageWidth;
     @SerializedName("image_height")
     private int imageHeight;
+    @SerializedName("tag_string")
+    private String tagString;
     @SerializedName("file_ext")
     private String fileExt;
     @SerializedName("tag_string_artist")
@@ -58,23 +60,10 @@ public class Post implements Parcelable {
     public int getImageHeight() {
         return imageHeight;
     }
-//
-//    public String[] getTagStringArtist() {
-//        return tagStringArtist.split(" ");
-//    }
-//
-//    public String[] getTagStringCharacter() {
-//        return tagStringCharacter.split(" ");
-//    }
-//
-//    public String[] getTagStringCopyright() {
-//        return tagStringCopyright.split(" ");
-//    }
-//
-//    public String[] getTagStringGeneral() {
-//        return tagStringGeneral.split(" ");
-//    }
 
+    public String getTagString() {
+        return tagString;
+    }
 
     public String getTagStringArtist() {
         return tagStringArtist;
