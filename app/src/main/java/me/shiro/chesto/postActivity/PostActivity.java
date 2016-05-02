@@ -1,14 +1,10 @@
 package me.shiro.chesto.postActivity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
@@ -24,23 +20,22 @@ import com.bumptech.glide.request.target.Target;
 
 import org.apmem.tools.layouts.FlowLayout;
 
-import me.shiro.chesto.Const;
 import me.shiro.chesto.R;
 import me.shiro.chesto.danbooruRetrofit.Post;
+import me.shiro.chesto.imageDownloadService.DownloadStatusListener;
 import me.shiro.chesto.imageDownloadService.ImageDownloadService;
 
 /**
  * Created by Shiro on 2/25/2016.
  * Displays a post
  */
-public final class PostActivity extends AppCompatActivity {
+public final class PostActivity extends AppCompatActivity implements DownloadStatusListener {
 
     public static final String POST = "me.shiro.chesto.POST";
 
     private ImageView imageView;
     private BottomSheetBehavior bottomSheetBehavior;
     private Post post;
-    private DownloadStatusReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,18 +45,6 @@ public final class PostActivity extends AppCompatActivity {
 
         final LinearLayout bottomSheet = (LinearLayout) findViewById(R.id.bottomSheet);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-
-        final LocalBroadcastManager broadcastManager =
-                LocalBroadcastManager.getInstance(PostActivity.this);
-        receiver = new DownloadStatusReceiver();
-        IntentFilter filter;
-        filter = new IntentFilter(Const.IMAGE_DL_START);
-        broadcastManager.registerReceiver(receiver, filter);
-        filter = new IntentFilter(Const.IMAGE_DL_FINISH);
-        filter.addDataScheme("file");
-        broadcastManager.registerReceiver(receiver, filter);
-        filter = new IntentFilter(Const.IMAGE_DL_ERROR);
-        broadcastManager.registerReceiver(receiver, filter);
 
         post = getIntent().getParcelableExtra(POST);
 
@@ -98,7 +81,7 @@ public final class PostActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+        //TODO: unregister listener
         super.onDestroy();
     }
 
@@ -112,46 +95,43 @@ public final class PostActivity extends AppCompatActivity {
     }
 
     public void onDownloadButtonClicked(View view) {
+        ImageDownloadService.addDownloadStatusListener(this);
+
         Intent intent = new Intent(this, ImageDownloadService.class);
         intent.putExtra(PostActivity.POST, post);
         startService(intent);
     }
 
-    private class DownloadStatusReceiver extends BroadcastReceiver {
+    @Override
+    public void onDownloadStarted(final Post p) {
+        if (post.equals(p)) {
+            Snackbar.make(imageView, "Saving Image", Snackbar.LENGTH_INDEFINITE)
+                    .show();
+        }
+    }
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final int postId = intent.getIntExtra(Const.POST_ID, -1);
-            if (postId != post.getId()) {
-                return;
-            }
+    @Override
+    public void onDownloadFinished(final Post p, final Uri uri) {
+        if (post.equals(p)) {
+            View.OnClickListener listener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(uri, "image/*");
+                    startActivity(intent);
+                }
+            };
+            Snackbar.make(imageView, "Image Saved", Snackbar.LENGTH_LONG)
+                    .setAction("Open", listener)
+                    .show();
+        }
+    }
 
-            switch (intent.getAction()) {
-
-                case Const.IMAGE_DL_START:
-                    Snackbar.make(imageView, "Saving Image", Snackbar.LENGTH_INDEFINITE)
-                            .show();
-                    break;
-
-                case Const.IMAGE_DL_FINISH:
-                    final Uri fileUri = intent.getData();
-                    View.OnClickListener listener = new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            final Intent intent = new Intent(Intent.ACTION_VIEW);
-                            intent.setDataAndType(fileUri, "image/*");
-                            startActivity(intent);
-                        }
-                    };
-                    Snackbar.make(imageView, "Image Saved", Snackbar.LENGTH_LONG)
-                            .setAction("Open", listener)
-                            .show();
-                    break;
-
-                case Const.IMAGE_DL_ERROR:
-                    Snackbar.make(imageView, "Error Saving Image", Snackbar.LENGTH_LONG);
-                    break;
-            }
+    @Override
+    public void onDownloadError(Post p) {
+        if (post.equals(p)) {
+            Snackbar.make(imageView, "Error Saving Image", Snackbar.LENGTH_LONG)
+                    .show();
         }
     }
 }

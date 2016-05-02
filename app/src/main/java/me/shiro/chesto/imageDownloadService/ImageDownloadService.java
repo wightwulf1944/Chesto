@@ -29,7 +29,14 @@ public final class ImageDownloadService extends Service {
     private static final String TAG = ImageDownloadService.class.getName();
     private static final File destinationPath = imageFileSaveDir();
 
-    private DownloadStatusBroadcaster broadcaster;
+    private static DownloadStatusObservable observable;
+
+    public static void addDownloadStatusListener(DownloadStatusListener listener) {
+        if (observable == null) {
+            observable = new DownloadStatusObservable();
+        }
+        observable.addListener(listener);
+    }
 
     private static File saveImage(File sourceFile, String name) throws IOException {
 
@@ -48,7 +55,7 @@ public final class ImageDownloadService extends Service {
         return destFile;
     }
 
-    public static File imageFileSaveDir() {
+    private static File imageFileSaveDir() {
         return Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES + "/Chesto/"
         );
@@ -58,8 +65,6 @@ public final class ImageDownloadService extends Service {
     public void onCreate() {
         Log.i(TAG, "ImageDownloadService created");
 
-        broadcaster = new DownloadStatusBroadcaster(this);
-
         if (!destinationPath.exists()) {
             destinationPath.mkdirs();
         }
@@ -67,6 +72,7 @@ public final class ImageDownloadService extends Service {
 
     @Override
     public void onDestroy() {
+        observable = null;
         Log.i(TAG, "ImageDownloadService destroyed");
     }
 
@@ -80,7 +86,7 @@ public final class ImageDownloadService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         final Post post = intent.getParcelableExtra(PostActivity.POST);
 
-        broadcaster.broadcastStarted(post);
+        observable.notifyStarted(post);
 
         Glide.with(this)
                 .load(post.getFileUrl())
@@ -102,14 +108,15 @@ public final class ImageDownloadService extends Service {
             try {
                 final File file = saveImage(resource, post.getFileName());
                 final Uri fileUri = Uri.fromFile(file);
+
                 final Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                 intent.setData(fileUri);
                 sendBroadcast(intent);
 
-                broadcaster.broadcastFinished(post, fileUri);
+                observable.notifyFinished(post, fileUri);
             } catch (IOException e) {
                 Log.d(TAG, "Error saving image", e);
-                broadcaster.broadcastError(post);
+                observable.notifyError(post);
             }
         }
     }
