@@ -23,6 +23,7 @@ import me.shiro.chesto.postActivity.PostActivity;
 /**
  * Created by Shiro on 4/6/2016.
  * Handles downloading images through glide
+ * TODO: this does not get destroyed?
  */
 public final class ImageDownloadService extends Service {
 
@@ -36,6 +37,13 @@ public final class ImageDownloadService extends Service {
             observable = new DownloadStatusObservable();
         }
         observable.addListener(listener);
+    }
+
+    public static void removeDownloadStatusListener(DownloadStatusListener listener) {
+        if (observable == null) {
+            observable = new DownloadStatusObservable();
+        }
+        observable.removeListener(listener);
     }
 
     private static File saveImage(File sourceFile, String name) throws IOException {

@@ -18,6 +18,10 @@ class DownloadStatusObservable {
         listeners.add(listener);
     }
 
+    void removeListener(final DownloadStatusListener listener) {
+        listeners.remove(listener);
+    }
+
     void notifyStarted(final Post post) {
         for (DownloadStatusListener listener : listeners) {
             listener.onDownloadStarted(post);

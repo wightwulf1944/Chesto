@@ -46,6 +46,8 @@ public final class PostActivity extends AppCompatActivity implements DownloadSta
         final LinearLayout bottomSheet = (LinearLayout) findViewById(R.id.bottomSheet);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
 
+        ImageDownloadService.addDownloadStatusListener(this);
+
         post = getIntent().getParcelableExtra(POST);
 
         DrawableRequestBuilder thumbnail = Glide.with(this)
@@ -81,7 +83,7 @@ public final class PostActivity extends AppCompatActivity implements DownloadSta
 
     @Override
     protected void onDestroy() {
-        //TODO: unregister listener
+        ImageDownloadService.removeDownloadStatusListener(this);
         super.onDestroy();
     }
 
@@ -95,8 +97,6 @@ public final class PostActivity extends AppCompatActivity implements DownloadSta
     }
 
     public void onDownloadButtonClicked(View view) {
-        ImageDownloadService.addDownloadStatusListener(this);
-
         Intent intent = new Intent(this, ImageDownloadService.class);
         intent.putExtra(PostActivity.POST, post);
         startService(intent);
