@@ -45,7 +45,7 @@ public final class MainActivity extends AppCompatActivity {
         swipeView.setColorSchemeColors(R.color.colorPrimaryDark);
         swipeView.setOnRefreshListener(postList);
 
-        final PostAdapter postAdapter = new PostAdapter(this, postList);
+        final PostAdapter postAdapter = new PostAdapter(this);
         final GreedoLayoutManager layoutManager = new GreedoLayoutManager(postAdapter);
         final int maxRowHeight = getResources().getDisplayMetrics().heightPixels / 3;
         layoutManager.setMaxRowHeight(maxRowHeight);

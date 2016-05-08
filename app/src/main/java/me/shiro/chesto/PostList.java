@@ -1,5 +1,6 @@
 package me.shiro.chesto;
 
+import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 
@@ -16,12 +17,14 @@ import retrofit2.Response;
 /**
  * Created by Shiro on 2/26/2016.
  * List class that handles fetching and merging  lists
+ * TODO: implement bus pattern for changes
+ * TODO: changes will be observed by swiperefresh, postadapter, and postpageradapter
  */
 public final class PostList extends ArrayList<Post> implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = PostList.class.getSimpleName();
-    private static final int REQUEST_POST_COUNT = 50;
-    private static final android.os.Handler handler = ChestoApplication.getMainThreadHandler();
+    public static final int REQUEST_POST_COUNT = 100;
+    private static final Handler handler = ChestoApplication.getMainThreadHandler();
     private static PostList instance;
 
     private PostAdapter adapter;
@@ -55,9 +58,23 @@ public final class PostList extends ArrayList<Post> implements SwipeRefreshLayou
         requestMorePosts();
     }
 
+    @Override
+    public void onRefresh() {
+        searchTags(tags);
+    }
+
+    // Removes posts with no preview url
+    private static void filterInvalid(Iterator<Post> i) {
+        while (i.hasNext()) {
+            if (i.next().getPreviewFileUrl() == null) {
+                i.remove();
+            }
+        }
+    }
+
     public void requestMorePosts() {
         Danbooru.api
-                .getPosts(tags, ++currentPage)
+                .getPosts(tags, ++currentPage, REQUEST_POST_COUNT)
                 .enqueue(new Callback<List<Post>>() {
                     @Override
                     public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
@@ -106,57 +123,5 @@ public final class PostList extends ArrayList<Post> implements SwipeRefreshLayou
                         Log.e(TAG, "Error fetching more posts", t);
                     }
                 });
-    }
-
-    @Override
-    public void onRefresh() {
-        Danbooru.api
-                .getPosts(tags, 1)
-                .enqueue(new Callback<List<Post>>() {
-                    @Override
-                    public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
-                        final List<Post> newPostList = response.body();
-
-                        filterInvalid(newPostList.iterator());
-
-                        if (!isEmpty() && !newPostList.isEmpty()) {
-                            final int duplicateIndex = indexOf(newPostList.get(newPostList.size() - 1));
-                            if (duplicateIndex >= 0) {
-                                subList(0, duplicateIndex + 1).clear();
-                            }
-                        }
-
-                        if (!newPostList.isEmpty()) {
-                            addAll(0, newPostList);
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    adapter.notifyItemRangeInserted(0, newPostList.size());
-                                }
-                            });
-                        }
-
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                swipeRefreshLayout.setRefreshing(false);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onFailure(Call<List<Post>> call, Throwable t) {
-                        Log.e(TAG, "Error trying to refresh posts", t);
-                    }
-                });
-    }
-
-    // Removes posts with no preview url
-    private static void filterInvalid(Iterator<Post> i) {
-        while (i.hasNext()) {
-            if (i.next().getPreviewFileUrl() == null) {
-                i.remove();
-            }
-        }
     }
 }

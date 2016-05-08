@@ -6,7 +6,6 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -20,8 +19,8 @@ public interface Danbooru {
             .build()
             .create(Danbooru.class);
 
-    @GET("posts.json?limit=50")
-    Call<List<Post>> getPosts(@Query("tags") String tags, @Query("page") int page);
+    @GET("posts.json")
+    Call<List<Post>> getPosts(@Query("tags") String tags, @Query("page") int page, @Query("limit") int limit);
 
     @GET("tags.json?search[order]=count")
     Call<List<Tag>> searchTags(@Query("search[name_matches]") String tags);

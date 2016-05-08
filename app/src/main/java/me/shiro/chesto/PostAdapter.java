@@ -25,11 +25,10 @@ public final class PostAdapter
     private static final int REQUEST_THRESHOLD = 20;
 
     private final Context context;
-    private final PostList postList;
+    private final PostList postList = PostList.getInstance();
 
-    public PostAdapter(Context context, PostList postList) {
+    public PostAdapter(Context context) {
         this.context = context;
-        this.postList = postList;
         postList.registerPostAdapter(this);
     }
 

@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by Shiro on 5/1/2016.
- * TODO: return raw tagStrings;
+ * Post object
  */
 public class Post implements Parcelable {
     @SerializedName("id")
