@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +25,7 @@ import me.shiro.chesto.Utils;
 public final class MainActivity extends AppCompatActivity {
 
     private final PostList postList = PostList.getInstance();
+    private AppBarLayout appBar;
     private MenuItem searchViewItem;
     private Toolbar actionBar;
     private SwipeRefreshLayout swipeView;
@@ -34,6 +36,7 @@ public final class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        appBar = (AppBarLayout) findViewById(R.id.appBar);
         actionBar = (Toolbar) findViewById(R.id.actionBar);
         swipeView = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -46,7 +49,7 @@ public final class MainActivity extends AppCompatActivity {
         swipeView.setOnRefreshListener(postList);
 
         final PostAdapter postAdapter = new PostAdapter(this);
-        final GreedoLayoutManager layoutManager = new GreedoLayoutManager(postAdapter);
+        final GreedoLayoutManager layoutManager = new GreedoLayoutManager(postList);
         final int maxRowHeight = getResources().getDisplayMetrics().heightPixels / 3;
         layoutManager.setMaxRowHeight(maxRowHeight);
 
@@ -75,6 +78,7 @@ public final class MainActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         swipeView.setRefreshing(true);
+        appBar.setExpanded(true);
         recyclerView.scrollToPosition(0);
         swipeView.scrollTo(0, 0);
         searchViewItem.collapseActionView();

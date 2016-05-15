@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <org.apmem.tools.layouts.FlowLayout
+            <me.shiro.chesto.postActivity.PostTagLayout
                 android:id="@+id/flowLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

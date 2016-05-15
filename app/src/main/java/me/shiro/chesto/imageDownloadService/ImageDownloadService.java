@@ -17,34 +17,21 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 
+import me.shiro.chesto.PostList;
 import me.shiro.chesto.danbooruRetrofit.Post;
 import me.shiro.chesto.postActivity.PostActivity;
 
 /**
  * Created by Shiro on 4/6/2016.
  * Handles downloading images through glide
- * TODO: this does not get destroyed?
+ * TODO: This service does not get destroyed
  */
 public final class ImageDownloadService extends Service {
 
     private static final String TAG = ImageDownloadService.class.getName();
     private static final File destinationPath = imageFileSaveDir();
 
-    private static DownloadStatusObservable observable;
-
-    public static void addDownloadStatusListener(DownloadStatusListener listener) {
-        if (observable == null) {
-            observable = new DownloadStatusObservable();
-        }
-        observable.addListener(listener);
-    }
-
-    public static void removeDownloadStatusListener(DownloadStatusListener listener) {
-        if (observable == null) {
-            observable = new DownloadStatusObservable();
-        }
-        observable.removeListener(listener);
-    }
+    private static ImageDownloadNotification notification;
 
     private static File saveImage(File sourceFile, String name) throws IOException {
 
@@ -73,6 +60,8 @@ public final class ImageDownloadService extends Service {
     public void onCreate() {
         Log.i(TAG, "ImageDownloadService created");
 
+        notification = new ImageDownloadNotification(this);
+
         if (!destinationPath.exists()) {
             destinationPath.mkdirs();
         }
@@ -80,7 +69,7 @@ public final class ImageDownloadService extends Service {
 
     @Override
     public void onDestroy() {
-        observable = null;
+        notification = null;
         Log.i(TAG, "ImageDownloadService destroyed");
     }
 
@@ -92,9 +81,9 @@ public final class ImageDownloadService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        final Post post = intent.getParcelableExtra(PostActivity.POST);
+        final Post post = PostList.getInstance().get(intent.getIntExtra(PostActivity.POST_INDEX, -1));
 
-        observable.notifyStarted(post);
+        notification.notifyStarted();
 
         Glide.with(this)
                 .load(post.getFileUrl())
@@ -121,10 +110,9 @@ public final class ImageDownloadService extends Service {
                 intent.setData(fileUri);
                 sendBroadcast(intent);
 
-                observable.notifyFinished(post, fileUri);
+                notification.notifyFinished();
             } catch (IOException e) {
                 Log.d(TAG, "Error saving image", e);
-                observable.notifyError(post);
             }
         }
     }

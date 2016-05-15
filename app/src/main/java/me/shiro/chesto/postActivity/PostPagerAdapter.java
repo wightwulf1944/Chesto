@@ -25,7 +25,7 @@ import uk.co.senab.photoview.PhotoView;
 /**
  * Created by Shiro on 5/4/2016.
  */
-final class PostPagerAdapter extends PagerAdapter {
+final public class PostPagerAdapter extends PagerAdapter {
 
     private static final PostList postList = PostList.getInstance();
     private final Context mContext;
@@ -35,6 +35,7 @@ final class PostPagerAdapter extends PagerAdapter {
     public PostPagerAdapter(final Context context) {
         mContext = context;
         inflater = LayoutInflater.from(mContext);
+        postList.registerPostPagerAdapter(this);
     }
 
     @Override

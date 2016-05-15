@@ -9,18 +9,14 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.fivehundredpx.greedolayout.GreedoLayoutSizeCalculator;
 
-import me.shiro.chesto.danbooruRetrofit.Post;
 import me.shiro.chesto.postActivity.PostActivity;
 
 /**
  * Created by Shiro on 2/23/2016.
  * PostAdapter
  */
-public final class PostAdapter
-        extends RecyclerView.Adapter<PostAdapter.ViewHolder>
-        implements GreedoLayoutSizeCalculator.SizeCalculatorDelegate {
+public final class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     private static final int REQUEST_THRESHOLD = 20;
 
@@ -43,11 +39,8 @@ public final class PostAdapter
             postList.requestMorePosts();
         }
 
-        Post post = postList.get(position);
-        holder.post = post;
-
         Glide.with(context)
-                .load(post.getPreviewFileUrl())
+                .load(postList.get(position).getPreviewFileUrl())
                 .error(R.drawable.ic_image_broken)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.mImageView);
@@ -58,19 +51,8 @@ public final class PostAdapter
         return postList.size();
     }
 
-    @Override
-    public double aspectRatioForIndex(int i) {
-        if (i >= postList.size()) {
-            return 1.0;
-        } else {
-            Post post = postList.get(i);
-            return (double) post.getImageWidth() / post.getImageHeight();
-        }
-    }
-
     final class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         final ImageView mImageView;
-        Post post;
 
         ViewHolder(ImageView v) {
             super(v);
@@ -86,7 +68,7 @@ public final class PostAdapter
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(context, PostActivity.class);
-            intent.putExtra(PostActivity.POST, post);
+            intent.putExtra(PostActivity.POST_INDEX, getAdapterPosition());
             context.startActivity(intent);
         }
     }

@@ -35,8 +35,7 @@
 
         <activity
             android:name=".postActivity.PostActivity"
-            android:parentActivityName=".mainActivity.MainActivity"
-            android:theme="@style/AppTheme.Fullscreen">
+            android:parentActivityName=".mainActivity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".mainActivity.MainActivity" />
