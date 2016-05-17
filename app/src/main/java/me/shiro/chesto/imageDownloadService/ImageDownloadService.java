@@ -87,23 +87,23 @@ public final class ImageDownloadService extends Service {
 
         Glide.with(this)
                 .load(post.getFileUrl())
-                .downloadOnly(new DownloadTarget(post));
+                .downloadOnly(new DownloadTarget(post.getFileName()));
 
         return START_NOT_STICKY;
     }
 
     private class DownloadTarget extends SimpleTarget<File> {
 
-        private final Post post;
+        private final String mFilename;
 
-        private DownloadTarget(final Post post) {
-            this.post = post;
+        private DownloadTarget(final String filename) {
+            mFilename = filename;
         }
 
         @Override
         public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
             try {
-                final File file = saveImage(resource, post.getFileName());
+                final File file = saveImage(resource, mFilename);
                 final Uri fileUri = Uri.fromFile(file);
 
                 final Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);

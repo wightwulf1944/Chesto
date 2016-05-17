@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
@@ -47,6 +48,8 @@ final public class PostPagerAdapter extends PagerAdapter {
             viewHolder = recycledHolders.remove();
         }
         viewHolder.setPost(postList.get(position));
+        container.addView(viewHolder.rootView);
+        viewHolder.rootView.setTag(position);
         return viewHolder;
     }
 
@@ -68,13 +71,11 @@ final public class PostPagerAdapter extends PagerAdapter {
     }
 
     private final class ViewHolder {
-        private ViewGroup mContainer;
         private View rootView;
         private PhotoView photoView;
         private ProgressBar progressBar;
 
         private ViewHolder(ViewGroup container) {
-            mContainer = container;
             rootView = inflater.inflate(R.layout.activity_post_page, container, false);
             photoView = (PhotoView) rootView.findViewById(R.id.photoView);
             progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
@@ -107,8 +108,6 @@ final public class PostPagerAdapter extends PagerAdapter {
                     .listener(listener)
                     .thumbnail(thumbnail)
                     .into(photoView);
-
-            mContainer.addView(rootView);
         }
     }
 }

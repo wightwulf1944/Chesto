@@ -2,13 +2,15 @@ package me.shiro.chesto.postActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
+import me.shiro.chesto.ChestoApplication;
 import me.shiro.chesto.PostList;
 import me.shiro.chesto.R;
 import me.shiro.chesto.imageDownloadService.ImageDownloadService;
@@ -22,10 +24,10 @@ public final class PostActivity extends AppCompatActivity {
 
     public static final String POST_INDEX = "me.shiro.chesto.POST_INDEX";
 
+    private PostPager postPager;
     private PostTagLayout postTagLayout;
     private BottomSheetBehavior bottomSheetBehavior;
     private int postIndex;
-    private Toast toast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,11 +35,12 @@ public final class PostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post);
 
         postTagLayout = (PostTagLayout) findViewById(R.id.flowLayout);
-        final PostPager postPager = (PostPager) findViewById(R.id.postPager);
+        postPager = (PostPager) findViewById(R.id.postPager);
         final LinearLayout bottomSheet = (LinearLayout) findViewById(R.id.bottomSheet);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
 
         selectedPageChanged(getIntent().getIntExtra(POST_INDEX, -1));
+
         postPager.setAdapter(new PostPagerAdapter(this));
         postPager.setCurrentItem(postIndex);
         postPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -67,9 +70,15 @@ public final class PostActivity extends AppCompatActivity {
         intent.putExtra(PostActivity.POST_INDEX, postIndex);
         startService(intent);
 
-        if (toast == null) {
-            toast = Toast.makeText(this, "Download Queued", Toast.LENGTH_SHORT);
-        }
-        toast.show();
+        final View v = postPager.findViewWithTag(postPager.getCurrentItem()).findViewById(R.id.downloadStatusBar);
+        v.setVisibility(View.VISIBLE);
+        Handler h = ChestoApplication.getMainThreadHandler();
+        h.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                v.setVisibility(View.INVISIBLE);
+            }
+        }, 2000);
+        Snackbar.make(postPager, "TEST", Snackbar.LENGTH_SHORT).show();
     }
 }
