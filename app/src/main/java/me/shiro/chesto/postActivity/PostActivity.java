@@ -1,8 +1,10 @@
 package me.shiro.chesto.postActivity;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
@@ -36,8 +38,24 @@ public final class PostActivity extends AppCompatActivity {
 
         postTagLayout = (PostTagLayout) findViewById(R.id.flowLayout);
         postPager = (PostPager) findViewById(R.id.postPager);
+
         final LinearLayout bottomSheet = (LinearLayout) findViewById(R.id.bottomSheet);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+
+            final ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(bottomSheet, "alpha", 0);
+
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                alphaAnimator.setFloatValues(slideOffset);
+                alphaAnimator.setDuration(0);
+                alphaAnimator.start();
+            }
+        });
 
         selectedPageChanged(getIntent().getIntExtra(POST_INDEX, -1));
 
