@@ -31,8 +31,6 @@ public final class ImageDownloadService extends Service {
     private static final String TAG = ImageDownloadService.class.getName();
     private static final File destinationPath = imageFileSaveDir();
 
-    private static ImageDownloadNotification notification;
-
     private static File saveImage(File sourceFile, String name) throws IOException {
 
         File destFile = new File(destinationPath, name);
@@ -60,8 +58,6 @@ public final class ImageDownloadService extends Service {
     public void onCreate() {
         Log.i(TAG, "ImageDownloadService created");
 
-        notification = new ImageDownloadNotification(this);
-
         if (!destinationPath.exists()) {
             destinationPath.mkdirs();
         }
@@ -69,7 +65,6 @@ public final class ImageDownloadService extends Service {
 
     @Override
     public void onDestroy() {
-        notification = null;
         Log.i(TAG, "ImageDownloadService destroyed");
     }
 
@@ -82,8 +77,6 @@ public final class ImageDownloadService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         final Post post = PostList.getInstance().get(intent.getIntExtra(PostActivity.POST_INDEX, -1));
-
-        notification.notifyStarted();
 
         Glide.with(this)
                 .load(post.getFileUrl())
@@ -110,7 +103,6 @@ public final class ImageDownloadService extends Service {
                 intent.setData(fileUri);
                 sendBroadcast(intent);
 
-                notification.notifyFinished();
             } catch (IOException e) {
                 Log.d(TAG, "Error saving image", e);
             }

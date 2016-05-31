@@ -87,16 +87,5 @@ public final class PostActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ImageDownloadService.class);
         intent.putExtra(PostActivity.POST_INDEX, postIndex);
         startService(intent);
-
-        final View v = postPager.findViewWithTag(postPager.getCurrentItem()).findViewById(R.id.downloadStatusBar);
-        v.setVisibility(View.VISIBLE);
-        Handler h = ChestoApplication.getMainThreadHandler();
-        h.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                v.setVisibility(View.INVISIBLE);
-            }
-        }, 2000);
-        Snackbar.make(postPager, "TEST", Snackbar.LENGTH_SHORT).show();
     }
 }
