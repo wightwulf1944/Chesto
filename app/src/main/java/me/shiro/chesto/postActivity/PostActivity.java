@@ -3,16 +3,13 @@ package me.shiro.chesto.postActivity;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import me.shiro.chesto.ChestoApplication;
 import me.shiro.chesto.PostList;
 import me.shiro.chesto.R;
 import me.shiro.chesto.imageDownloadService.ImageDownloadService;
@@ -60,6 +57,7 @@ public final class PostActivity extends AppCompatActivity {
         selectedPageChanged(getIntent().getIntExtra(POST_INDEX, -1));
 
         postPager.setAdapter(new PostPagerAdapter(this));
+        postPager.setOffscreenPageLimit(2);
         postPager.setCurrentItem(postIndex);
         postPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
