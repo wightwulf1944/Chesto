@@ -31,33 +31,28 @@ final public class PostPagerAdapter extends PagerAdapter {
     private static final PostList postList = PostList.getInstance();
     private final Context mContext;
     private final LayoutInflater inflater;
-    private Queue<ViewHolder> recycledHolders = new LinkedList<>();
+    private final ViewHolderProvider vhProvider;
 
     public PostPagerAdapter(final Context context) {
         mContext = context;
         inflater = LayoutInflater.from(mContext);
+        vhProvider = new ViewHolderProvider();
         postList.registerPostPagerAdapter(this);
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        final ViewHolder viewHolder;
-        if (recycledHolders.isEmpty()) {
-            viewHolder = new ViewHolder(container);
-        } else {
-            viewHolder = recycledHolders.remove();
-        }
-        viewHolder.setPost(postList.get(position));
-        container.addView(viewHolder.rootView);
-        viewHolder.rootView.setTag(position);
-        return viewHolder;
+        ViewHolder vh = vhProvider.getViewHolder();
+        vh.setPost(position);
+        container.addView(vh.rootView);
+        return vh;
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        ViewHolder viewHolder = (ViewHolder) object;
-        recycledHolders.add(viewHolder);
-        container.removeView(viewHolder.rootView);
+        ViewHolder vh = (ViewHolder) object;
+        vhProvider.recycleViewHolder(vh);
+        container.removeView(vh.rootView);
     }
 
     @Override
@@ -70,13 +65,32 @@ final public class PostPagerAdapter extends PagerAdapter {
         return view == ((ViewHolder) object).rootView;
     }
 
+    private final class ViewHolderProvider {
+        private Queue<ViewHolder> recycledHolders = new LinkedList<>();
+
+        private ViewHolder getViewHolder() {
+            final ViewHolder viewHolder;
+            if (recycledHolders.isEmpty()) {
+                viewHolder = new ViewHolder();
+            } else {
+                viewHolder = recycledHolders.remove();
+            }
+            return viewHolder;
+        }
+
+        private void recycleViewHolder(ViewHolder viewHolder) {
+            recycledHolders.add(viewHolder);
+        }
+    }
+
     private final class ViewHolder {
         private View rootView;
         private PhotoView photoView;
         private ProgressBar progressBar;
+        private Post post;
 
-        private ViewHolder(ViewGroup container) {
-            rootView = inflater.inflate(R.layout.activity_post_page, container, false);
+        private ViewHolder() {
+            rootView = inflater.inflate(R.layout.activity_post_page, null);
             photoView = (PhotoView) rootView.findViewById(R.id.photoView);
             progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
         }
@@ -86,6 +100,8 @@ final public class PostPagerAdapter extends PagerAdapter {
                     .load(post.getPreviewFileUrl())
                     .fitCenter();
 
+        private void setPost(final int position) {
+            post = postList.get(position);
             progressBar.setVisibility(View.VISIBLE);
             RequestListener<String, GlideDrawable> listener = new RequestListener<String, GlideDrawable>() {
                 @Override
