@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 
 import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -103,6 +104,7 @@ final public class PostPagerAdapter extends PagerAdapter {
                     .load(post.getFileUrl())
                     .thumbnail(thumbnail)
                     .error(R.drawable.ic_image_broken)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .listener(this)
                     .into(photoView);
         }

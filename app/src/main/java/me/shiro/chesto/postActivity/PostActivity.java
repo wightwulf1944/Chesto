@@ -17,7 +17,6 @@ import me.shiro.chesto.imageDownloadService.ImageDownloadService;
 /**
  * Created by Shiro on 2/25/2016.
  * Displays a post
- * TODO: Consider using snackbar bound to page instead of toast for download
  */
 public final class PostActivity extends AppCompatActivity {
 
@@ -65,6 +64,13 @@ public final class PostActivity extends AppCompatActivity {
                 selectedPageChanged(position);
             }
         });
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
     }
 
     private void selectedPageChanged(int position) {

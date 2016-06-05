@@ -7,8 +7,7 @@
     <me.shiro.chesto.postActivity.PostPager
         android:id="@+id/postPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="@dimen/keyline" />
+        android:layout_height="match_parent" />
 
     <LinearLayout
         android:id="@+id/bottomSheet"
@@ -45,6 +44,7 @@
         android:layout_margin="@dimen/fabMargin"
         android:onClick="onDownloadButtonClicked"
         android:src="@drawable/ic_download"
+        app:fabSize="mini"
         app:layout_anchor="@id/bottomSheet"
         app:layout_anchorGravity="top|right|end" />
 
