@@ -18,7 +18,8 @@
         app:behavior_peekHeight="?attr/actionBarSize"
         app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
-        <TextView
+        <View
+            android:id="@+id/bottomSheetHeader"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary" />
@@ -46,6 +47,16 @@
         android:src="@drawable/ic_download"
         app:fabSize="mini"
         app:layout_anchor="@id/bottomSheet"
-        app:layout_anchorGravity="top|right|end" />
+        app:layout_anchorGravity="top|end" />
+
+    <ImageButton
+        android:id="@+id/bottomSheetInfoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:padding="16dp"
+        android:src="@drawable/ic_info"
+        app:layout_anchor="@id/bottomSheetHeader"
+        app:layout_anchorGravity="center_vertical|start" />
 
 </android.support.design.widget.CoordinatorLayout>
