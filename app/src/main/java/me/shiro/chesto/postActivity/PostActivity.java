@@ -86,13 +86,6 @@ public final class PostActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
-    }
-
     private void selectedPageChanged(int position) {
         postIndex = position;
         postTagLayout.setPost(PostList.getInstance().get(postIndex));
