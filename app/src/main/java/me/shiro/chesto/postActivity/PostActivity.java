@@ -33,6 +33,16 @@ public final class PostActivity extends AppCompatActivity {
 
         postTagLayout = (PostTagLayout) findViewById(R.id.flowLayout);
 
+        final ImageButton upButton = (ImageButton) findViewById(R.id.upButton);
+        if (upButton != null) {
+            upButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+        }
+
         final ImageButton infoButton = (ImageButton) findViewById(R.id.bottomSheetInfoButton);
         final View bottomSheet = findViewById(R.id.bottomSheet);
         if (bottomSheet != null && infoButton != null) {
