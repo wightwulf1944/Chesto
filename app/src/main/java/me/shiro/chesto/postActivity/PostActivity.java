@@ -54,7 +54,7 @@ public final class PostActivity extends AppCompatActivity {
                     if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                         infoButton.setImageResource(R.drawable.ic_info);
                     } else {
-                        infoButton.setImageResource(R.drawable.ic_close);
+                        infoButton.setImageResource(R.drawable.ic_arrow_hide);
                     }
                 }
 
@@ -71,7 +71,6 @@ public final class PostActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
                         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                        infoButton.setImageResource(R.drawable.ic_close);
                     } else {
                         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     }
