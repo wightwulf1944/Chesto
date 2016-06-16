@@ -9,16 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <ImageButton
-        android:id="@+id/upButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start|top"
-        android:layout_margin="@dimen/bMargin"
-        android:background="@drawable/bg_circle_gradient"
-        android:padding="16dp"
-        android:src="@drawable/ic_arrow_back" />
-
     <LinearLayout
         android:id="@+id/bottomSheet"
         android:layout_width="match_parent"
@@ -48,16 +38,16 @@
 
     </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/postFab"
+    <ImageButton
+        android:id="@+id/upButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fabMargin"
-        android:onClick="onDownloadButtonClicked"
-        android:src="@drawable/ic_download"
-        app:fabSize="mini"
-        app:layout_anchor="@id/bottomSheet"
-        app:layout_anchorGravity="top|end" />
+        android:layout_gravity="start|top"
+        android:layout_margin="@dimen/bMargin"
+        android:background="@drawable/bg_circle_gradient"
+        android:onClick="onUpButtonClicked"
+        android:padding="16dp"
+        android:src="@drawable/ic_arrow_back" />
 
     <ImageButton
         android:id="@+id/bottomSheetInfoButton"
@@ -65,9 +55,22 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/bMargin"
         android:background="@drawable/bg_circle_gradient"
+        android:onClick="onInfoButtonClicked"
         android:padding="16dp"
         android:src="@drawable/ic_info"
         app:layout_anchor="@id/bottomSheetHeader"
         app:layout_anchorGravity="center_vertical|start" />
+
+    <ImageButton
+        android:id="@+id/downloadButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/bMargin"
+        android:background="@drawable/bg_circle_gradient"
+        android:onClick="onDownloadButtonClicked"
+        android:padding="16dp"
+        android:src="@drawable/ic_download"
+        app:layout_anchor="@id/bottomSheetHeader"
+        app:layout_anchorGravity="center_vertical|end" />
 
 </android.support.design.widget.CoordinatorLayout>

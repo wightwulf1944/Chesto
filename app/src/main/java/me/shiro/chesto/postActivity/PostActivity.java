@@ -33,16 +33,6 @@ public final class PostActivity extends AppCompatActivity {
 
         postTagLayout = (PostTagLayout) findViewById(R.id.flowLayout);
 
-        final ImageButton upButton = (ImageButton) findViewById(R.id.upButton);
-        if (upButton != null) {
-            upButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    finish();
-                }
-            });
-        }
-
         final ImageButton infoButton = (ImageButton) findViewById(R.id.bottomSheetInfoButton);
         final View bottomSheet = findViewById(R.id.bottomSheet);
         if (bottomSheet != null && infoButton != null) {
@@ -63,17 +53,6 @@ public final class PostActivity extends AppCompatActivity {
                     final ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(bottomSheet, "alpha", slideOffset);
                     alphaAnimator.setDuration(0);
                     alphaAnimator.start();
-                }
-            });
-
-            infoButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
-                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                    } else {
-                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                    }
                 }
             });
         }
@@ -106,6 +85,18 @@ public final class PostActivity extends AppCompatActivity {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    public void onUpButtonClicked(View view) {
+        finish();
+    }
+
+    public void onInfoButtonClicked(View view) {
+        if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        } else {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         }
     }
 
