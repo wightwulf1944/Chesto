@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -45,7 +46,7 @@ public final class MainActivity extends AppCompatActivity {
 
         postList.registerSwipeRefreshLayout(swipeView);
 
-        swipeView.setColorSchemeColors(R.color.colorPrimaryDark);
+        swipeView.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         swipeView.setOnRefreshListener(postList);
 
         final PostAdapter postAdapter = new PostAdapter(this);
