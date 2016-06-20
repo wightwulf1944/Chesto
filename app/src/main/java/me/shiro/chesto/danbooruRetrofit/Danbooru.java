@@ -14,7 +14,7 @@ import retrofit2.http.Query;
 public interface Danbooru {
 
     Danbooru api = new Retrofit.Builder()
-            .baseUrl("https://danbooru.donmai.us/")
+            .baseUrl("http://danbooru.donmai.us/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(Danbooru.class);
