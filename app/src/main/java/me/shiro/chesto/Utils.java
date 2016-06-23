@@ -1,11 +1,8 @@
 package me.shiro.chesto;
 
 import android.content.Context;
-import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
-
-import java.io.File;
 
 /**
  * Created by Shiro on 2/27/2016.

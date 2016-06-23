@@ -63,7 +63,6 @@ public final class PostActivity extends AppCompatActivity {
         final PostPager postPager = (PostPager) findViewById(R.id.postPager);
         if (postPager != null) {
             postPager.setAdapter(new PostPagerAdapter(this));
-            postPager.setOffscreenPageLimit(2);
             postPager.setCurrentItem(postIndex);
             postPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
                 @Override
