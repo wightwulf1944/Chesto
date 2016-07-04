@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+
 /**
  * Created by Shiro on 4/28/2016.
  */
@@ -28,5 +30,6 @@ public final class ChestoApplication extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+        Fresco.initialize(this);
     }
 }

@@ -12,7 +12,7 @@ import java.util.List;
 
 import me.shiro.chesto.ChestoApplication;
 import me.shiro.chesto.R;
-import me.shiro.chesto.danbooruRetrofit.Danbooru;
+import me.shiro.chesto.danbooruRetrofit.DanbooruApi;
 import me.shiro.chesto.danbooruRetrofit.Tag;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -91,7 +91,7 @@ final class SearchSuggestions implements
         }
 
         if (query.length() > 1) {
-            suggestionCall = Danbooru.api
+            suggestionCall = DanbooruApi.api
                     .searchTags(query + "*");
             suggestionCall.enqueue(this);
             return true;

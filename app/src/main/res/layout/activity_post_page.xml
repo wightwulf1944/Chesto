@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<me.shiro.chesto.fresco.zoomable.ZoomableDraweeView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/frescoView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <uk.co.senab.photoview.PhotoView
-        android:id="@+id/photoView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:ignore="ContentDescription" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:indeterminate="true" />
-
-</FrameLayout>
+    android:layout_height="match_parent"
+    fresco:actualImageScaleType="fitCenter"
+    fresco:failureImage="@drawable/ic_image_broken"
+    fresco:failureImageScaleType="centerInside"
+    fresco:retryImage="@drawable/ic_image_broken"
+    fresco:retryImageScaleType="centerInside" />

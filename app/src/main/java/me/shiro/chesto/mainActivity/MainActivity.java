@@ -18,13 +18,19 @@ import android.view.View;
 import com.fivehundredpx.greedolayout.GreedoLayoutManager;
 import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import me.shiro.chesto.PostAdapter;
 import me.shiro.chesto.PostList;
 import me.shiro.chesto.R;
 import me.shiro.chesto.Utils;
+import me.shiro.chesto.events.Event;
 
 public final class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final EventBus eventBus = EventBus.getDefault();
     private final PostList postList = PostList.getInstance();
     private AppBarLayout appBar;
     private MenuItem searchViewItem;
@@ -36,6 +42,7 @@ public final class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        eventBus.register(this);
         setContentView(R.layout.activity_main);
         appBar = (AppBarLayout) findViewById(R.id.appBar);
         actionBar = (Toolbar) findViewById(R.id.actionBar);
@@ -43,8 +50,6 @@ public final class MainActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
         setSupportActionBar(actionBar);
-
-        postList.registerSwipeRefreshLayout(swipeView);
 
         swipeView.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         swipeView.setOnRefreshListener(postList);
@@ -77,8 +82,13 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        eventBus.unregister(this);
+        super.onDestroy();
+    }
+
+    @Override
     protected void onNewIntent(Intent intent) {
-        swipeView.setRefreshing(true);
         appBar.setExpanded(true);
         recyclerView.scrollToPosition(0);
         swipeView.scrollTo(0, 0);
@@ -91,10 +101,10 @@ public final class MainActivity extends AppCompatActivity {
             case Intent.ACTION_SEARCH:
                 searchQuery = intent.getStringExtra(SearchManager.QUERY);
                 actionBar.setSubtitle(searchQuery);
-                postList.searchTags(searchQuery);
+                postList.newSearch(searchQuery);
                 break;
             default:
-                postList.searchTags("");
+                postList.newSearch("");
                 break;
         }
     }
@@ -125,5 +135,15 @@ public final class MainActivity extends AppCompatActivity {
         });
         new SearchSuggestions(searchView, this);
         return true;
+    }
+
+    @Subscribe
+    public void onSwipeRefreshEvent(Event.PostsLoading event) {
+        swipeView.setRefreshing(true);
+    }
+
+    @Subscribe
+    public void onSwipeNotRefreshingEvent(Event.PostsLoadingFinished event) {
+        swipeView.setRefreshing(false);
     }
 }

@@ -1,26 +1,30 @@
 package me.shiro.chesto.postActivity;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
-import com.bumptech.glide.DrawableRequestBuilder;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.drawable.ProgressBarDrawable;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.imagepipeline.request.ImageRequest;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
 import me.shiro.chesto.PostList;
 import me.shiro.chesto.R;
+import me.shiro.chesto.Utils;
 import me.shiro.chesto.danbooruRetrofit.Post;
-import uk.co.senab.photoview.PhotoView;
+import me.shiro.chesto.events.Event;
+import me.shiro.chesto.fresco.zoomable.ZoomableDraweeView;
 
 /**
  * Created by Shiro on 5/4/2016.
@@ -33,10 +37,10 @@ final public class PostPagerAdapter extends PagerAdapter {
     private final ViewHolderProvider vhProvider;
 
     public PostPagerAdapter(final Context context) {
+        EventBus.getDefault().register(this);
         mContext = context;
         inflater = LayoutInflater.from(mContext);
         vhProvider = new ViewHolderProvider();
-        postList.registerPostPagerAdapter(this);
     }
 
     @Override
@@ -64,6 +68,11 @@ final public class PostPagerAdapter extends PagerAdapter {
         return view == ((ViewHolder) object).rootView;
     }
 
+    @Subscribe
+    public void onDataSetChanged(Event.PostListUpdated event) {
+        notifyDataSetChanged();
+    }
+
     private final class ViewHolderProvider {
         private Queue<ViewHolder> recycledHolders = new LinkedList<>();
 
@@ -82,43 +91,38 @@ final public class PostPagerAdapter extends PagerAdapter {
         }
     }
 
-    private final class ViewHolder implements RequestListener<String, GlideDrawable> {
-        private View rootView;
-        private PhotoView photoView;
-        private ProgressBar progressBar;
+    private final class ViewHolder {
+        private ZoomableDraweeView rootView;
 
         private ViewHolder() {
-            rootView = inflater.inflate(R.layout.activity_post_page, null);
-            photoView = (PhotoView) rootView.findViewById(R.id.photoView);
-            progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
+            rootView = (ZoomableDraweeView) inflater.inflate(R.layout.activity_post_page, null);
+
+            ProgressBarDrawable progressBarDrawable = new ProgressBarDrawable();
+            progressBarDrawable.setColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
+            progressBarDrawable.setBarWidth(Utils.dpToPx(2));
+
+            GenericDraweeHierarchy frescoHierarchy = rootView.getHierarchy();
+            frescoHierarchy.setProgressBarImage(progressBarDrawable);
+
+            rootView.setHierarchy(frescoHierarchy);
         }
 
         private void setPost(final int position) {
             final Post post = postList.get(position);
-            progressBar.setVisibility(View.VISIBLE);
+            final ImageRequest lowRes = ImageRequest.fromUri(post.getPreviewFileUrl());
+            final ImageRequest highRes = ImageRequest.fromUri(post.getFileUrl());
 
-            DrawableRequestBuilder<String> thumbnail = Glide.with(mContext)
-                    .load(post.getPreviewFileUrl());
+            //TODO: notify that webm and mp4 is not supported
 
-            Glide.with(mContext)
-                    .load(post.getFileUrl())
-                    .thumbnail(thumbnail)
-                    .error(R.drawable.ic_image_broken)
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .listener(this)
-                    .into(photoView);
-        }
+            DraweeController controller = Fresco.newDraweeControllerBuilder()
+                    .setLowResImageRequest(lowRes)
+                    .setImageRequest(highRes)
+                    .setAutoPlayAnimations(true)
+                    .setTapToRetryEnabled(true)
+                    .setOldController(rootView.getController())
+                    .build();
 
-        @Override
-        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-            progressBar.setVisibility(View.INVISIBLE);
-            return false;
-        }
-
-        @Override
-        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-            progressBar.setVisibility(View.INVISIBLE);
-            return false;
+            rootView.setController(controller);
         }
     }
 }
