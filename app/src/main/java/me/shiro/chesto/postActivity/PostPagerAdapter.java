@@ -13,6 +13,9 @@ import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.imagepipeline.request.ImageRequest;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -20,6 +23,7 @@ import me.shiro.chesto.PostList;
 import me.shiro.chesto.R;
 import me.shiro.chesto.Utils;
 import me.shiro.chesto.danbooruRetrofit.Post;
+import me.shiro.chesto.events.Event;
 import me.shiro.chesto.fresco.zoomable.ZoomableDraweeView;
 
 /**
@@ -33,10 +37,10 @@ final public class PostPagerAdapter extends PagerAdapter {
     private final ViewHolderProvider vhProvider;
 
     public PostPagerAdapter(final Context context) {
+        EventBus.getDefault().register(this);
         mContext = context;
         inflater = LayoutInflater.from(mContext);
         vhProvider = new ViewHolderProvider();
-        postList.registerPostPagerAdapter(this);
     }
 
     @Override
@@ -62,6 +66,11 @@ final public class PostPagerAdapter extends PagerAdapter {
     @Override
     public boolean isViewFromObject(View view, Object object) {
         return view == ((ViewHolder) object).rootView;
+    }
+
+    @Subscribe
+    public void onDataSetChanged(Event.PostListUpdated event) {
+        notifyDataSetChanged();
     }
 
     private final class ViewHolderProvider {

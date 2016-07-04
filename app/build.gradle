@@ -3,7 +3,6 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.0"
-
     defaultConfig {
         applicationId "me.shiro.chesto"
         minSdkVersion 15
@@ -14,14 +13,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            shrinkResources true
-            proguardFiles 'proguard-fresco.pro'
-            proguardFiles 'proguard-glide.pro'
-            proguardFiles 'proguard-retrofit.pro'
-            proguardFiles getDefaultProguardFile('proguard-android.txt')
-        }
-        debug {
-            debuggable true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-fresco.pro', 'proguard-glide.pro', 'proguard-retrofit.pro'
         }
     }
 }
@@ -33,30 +25,26 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-//    android support library
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    //    android support library
     compile 'com.android.support:design:24.0.0'
     compile 'com.android.support:support-v4:24.0.0'
     compile 'com.android.support:appcompat-v7:24.0.0'
     compile 'com.android.support:recyclerview-v7:24.0.0'
-
-//    https://github.com/500px/greedo-layout-for-android
+    //    https://github.com/500px/greedo-layout-for-android
     compile 'com.fivehundredpx:greedo-layout:1.0.0'
-
-//    https://github.com/google/gson
+    //    https://github.com/google/gson
     compile 'com.google.code.gson:gson:2.6.2'
-
-//    https://github.com/ApmeM/android-flowlayout
+    //    https://github.com/ApmeM/android-flowlayout
     compile 'org.apmem.tools:layouts:1.10@aar'
-
-//    https://github.com/bumptech/glide
+    //    https://github.com/bumptech/glide
     compile 'com.github.bumptech.glide:glide:3.7.0'
-
-//    http://square.github.io/retrofit/
+    //    http://square.github.io/retrofit/
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
-
-//    http://frescolib.org/
+    //    http://greenrobot.org/eventbus/
+    compile 'org.greenrobot:eventbus:3.0.0'
+    //    http://frescolib.org/
     compile 'com.facebook.fresco:fresco:0.11.0'
     compile 'com.facebook.fresco:animated-gif:0.11.0'
     compile 'com.facebook.fresco:animated-webp:0.11.0'

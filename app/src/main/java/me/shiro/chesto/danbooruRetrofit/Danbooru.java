@@ -13,12 +13,6 @@ import retrofit2.http.Query;
  */
 public interface Danbooru {
 
-    Danbooru api = new Retrofit.Builder()
-            .baseUrl("http://danbooru.donmai.us/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(Danbooru.class);
-
     @GET("posts.json")
     Call<List<Post>> getPosts(@Query("tags") String tags, @Query("page") int page, @Query("limit") int limit);
 

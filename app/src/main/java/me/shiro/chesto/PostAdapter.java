@@ -5,11 +5,16 @@ import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.view.SimpleDraweeView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import me.shiro.chesto.events.Event;
 import me.shiro.chesto.postActivity.PostActivity;
 
 /**
@@ -19,18 +24,23 @@ import me.shiro.chesto.postActivity.PostActivity;
 public final class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     private static final int REQUEST_THRESHOLD = 20;
-
+    private static final PostList postList = PostList.getInstance();
     private final Context context;
-    private final PostList postList = PostList.getInstance();
 
     public PostAdapter(Context context) {
+        EventBus.getDefault().register(this);
         this.context = context;
-        postList.registerPostAdapter(this);
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(new ImageView(context));
+        GenericDraweeHierarchy hierarchy = new GenericDraweeHierarchyBuilder(context.getResources())
+                .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                .setFailureImage(R.drawable.ic_image_broken)
+                .setFailureImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                .build();
+        SimpleDraweeView simpleDraweeView = new SimpleDraweeView(context, hierarchy);
+        return new ViewHolder(simpleDraweeView);
     }
 
     @Override
@@ -39,11 +49,7 @@ public final class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHold
             postList.requestMorePosts();
         }
 
-        Glide.with(context)
-                .load(postList.get(position).getPreviewFileUrl())
-                .error(R.drawable.ic_image_broken)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(holder.mImageView);
+        holder.simpleDraweeView.setImageURI(postList.get(position).getPreviewFileUrl());
     }
 
     @Override
@@ -51,18 +57,23 @@ public final class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHold
         return postList.size();
     }
 
-    final class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        final ImageView mImageView;
+    @Subscribe
+    public void onDatasetChanged(Event.PostListUpdated event) {
+        notifyItemRangeInserted(event.positionStart, event.itemCount);
+    }
 
-        ViewHolder(ImageView v) {
+    @Subscribe
+    public void onDatasetChanged(Event.PostListRefreshed event) {
+        notifyDataSetChanged();
+    }
+
+    final class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        final SimpleDraweeView simpleDraweeView;
+
+        ViewHolder(SimpleDraweeView v) {
             super(v);
-            mImageView = v;
-            mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            mImageView.setLayoutParams(new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-            ));
-            mImageView.setOnClickListener(this);
+            simpleDraweeView = v;
+            simpleDraweeView.setOnClickListener(this);
         }
 
         @Override
