@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="me.shiro.chesto.danbooruRetrofit.Post" />
+
+        <variable
+            name="item"
+            type="Post" />
+    </data>
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        fresco:actualImageScaleType="fitCenter"
+        fresco:failureImage="@drawable/ic_image_broken"
+        fresco:failureImageScaleType="fitCenter" />
+
+</layout>

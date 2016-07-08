@@ -15,19 +15,24 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.fivehundredpx.greedolayout.GreedoLayoutManager;
 import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration;
+import com.github.nitrico.lastadapter.LastAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.jetbrains.annotations.NotNull;
 
-import me.shiro.chesto.PostAdapter;
+import me.shiro.chesto.BR;
 import me.shiro.chesto.PostList;
 import me.shiro.chesto.R;
 import me.shiro.chesto.Utils;
+import me.shiro.chesto.danbooruRetrofit.Post;
 import me.shiro.chesto.events.Event;
+import me.shiro.chesto.postActivity.PostActivity;
 
-public final class MainActivity extends AppCompatActivity {
+public final class MainActivity extends AppCompatActivity implements LastAdapter.OnBindListener, LastAdapter.OnClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final EventBus eventBus = EventBus.getDefault();
@@ -54,17 +59,22 @@ public final class MainActivity extends AppCompatActivity {
         swipeView.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         swipeView.setOnRefreshListener(postList);
 
-        final PostAdapter postAdapter = new PostAdapter(this);
         final GreedoLayoutManager layoutManager = new GreedoLayoutManager(postList);
         final int maxRowHeight = getResources().getDisplayMetrics().heightPixels / 3;
         layoutManager.setMaxRowHeight(maxRowHeight);
+
+        final LastAdapter adapter = LastAdapter.with(postList, BR.item)
+                .map(Post.class, R.layout.item_recyclerview_post)
+                .onBindListener(this)
+                .onClickListener(this)
+                .build();
 
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         final int spacing = Utils.dpToPx(4);
         recyclerView.addItemDecoration(new GreedoSpacingItemDecoration(spacing));
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(postAdapter);
+        recyclerView.setAdapter(adapter);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -145,5 +155,22 @@ public final class MainActivity extends AppCompatActivity {
     @Subscribe
     public void onSwipeNotRefreshingEvent(Event.PostsLoadingFinished event) {
         swipeView.setRefreshing(false);
+    }
+
+    @Override
+    public void onBind(@NotNull Object o, @NotNull View view, int i) {
+        if (i == postList.size() - 5) {
+            postList.requestMorePosts();
+        }
+
+        SimpleDraweeView simpleDraweeView = (SimpleDraweeView) view;
+        simpleDraweeView.setImageURI(postList.get(i).getPreviewFileUrl());
+    }
+
+    @Override
+    public void onClick(@NotNull Object o, @NotNull View view, int i) {
+        Intent intent = new Intent(this, PostActivity.class);
+        intent.putExtra(PostActivity.POST_INDEX, i);
+        startActivity(intent);
     }
 }
