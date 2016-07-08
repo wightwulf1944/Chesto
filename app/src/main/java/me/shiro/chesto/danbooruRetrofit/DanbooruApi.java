@@ -26,8 +26,8 @@ public class DanbooruApi {
             .build()
             .create(Danbooru.class);
 
-    public static void getPosts(String tags, int page, int limit) {
-        api.getPosts(tags, page, limit).enqueue(new ReceivePostsCallback());
+    public static void getPosts(String tags, int page) {
+        api.getPosts(tags, page).enqueue(new ReceivePostsCallback());
     }
 
     private static class ReceivePostsCallback implements Callback<List<Post>> {

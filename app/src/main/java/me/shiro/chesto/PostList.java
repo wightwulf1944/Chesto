@@ -22,7 +22,6 @@ public final class PostList extends ArrayList<Post>
 
     private static final String TAG = PostList.class.getSimpleName();
     private static final EventBus eventBus = EventBus.getDefault();
-    public static final int REQUEST_POST_COUNT = 100;
     private static PostList instance;
 
     private int currentPage = 0;
@@ -36,7 +35,7 @@ public final class PostList extends ArrayList<Post>
     }
 
     private PostList() {
-        super(REQUEST_POST_COUNT);
+        // Disable creation
     }
 
     public void newSearch(final String tagSearch) {
@@ -54,7 +53,7 @@ public final class PostList extends ArrayList<Post>
     }
 
     public void requestMorePosts() {
-        DanbooruApi.getPosts(tags, ++currentPage, REQUEST_POST_COUNT);
+        DanbooruApi.getPosts(tags, ++currentPage);
     }
 
     public void onReceiveMorePosts(List<Post> newPostList) {

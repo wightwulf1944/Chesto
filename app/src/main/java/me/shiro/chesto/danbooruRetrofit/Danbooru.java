@@ -14,7 +14,7 @@ import retrofit2.http.Query;
 public interface Danbooru {
 
     @GET("posts.json")
-    Call<List<Post>> getPosts(@Query("tags") String tags, @Query("page") int page, @Query("limit") int limit);
+    Call<List<Post>> getPosts(@Query("tags") String tags, @Query("page") int page);
 
     @GET("tags.json?search[order]=count")
     Call<List<Tag>> searchTags(@Query("search[name_matches]") String tags);
