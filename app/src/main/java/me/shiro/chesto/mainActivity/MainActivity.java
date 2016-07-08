@@ -63,11 +63,18 @@ public final class MainActivity extends AppCompatActivity implements LastAdapter
         final int maxRowHeight = getResources().getDisplayMetrics().heightPixels / 3;
         layoutManager.setMaxRowHeight(maxRowHeight);
 
+        final LastAdapter adapter = LastAdapter.with(postList, BR.item)
+                .map(Post.class, R.layout.item_recyclerview_post)
+                .onBindListener(this)
+                .onClickListener(this)
+                .build();
+
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         final int spacing = Utils.dpToPx(4);
         recyclerView.addItemDecoration(new GreedoSpacingItemDecoration(spacing));
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -80,12 +87,6 @@ public final class MainActivity extends AppCompatActivity implements LastAdapter
                 }
             }
         });
-
-        LastAdapter.with(postList, BR.item)
-                .map(Post.class, R.layout.item_recyclerview_post)
-                .onBindListener(this)
-                .onClickListener(this)
-                .into(recyclerView);
 
         handleIntent(getIntent());
     }
