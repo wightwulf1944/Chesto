@@ -1,12 +1,12 @@
 package me.shiro.chesto;
 
+import android.databinding.ObservableArrayList;
 import android.support.v4.widget.SwipeRefreshLayout;
 
 import com.fivehundredpx.greedolayout.GreedoLayoutSizeCalculator;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import me.shiro.chesto.danbooruRetrofit.DanbooruApi;
@@ -17,7 +17,7 @@ import me.shiro.chesto.events.Event;
  * Created by Shiro on 2/26/2016.
  * List class that handles fetching and merging  lists
  */
-public final class PostList extends ArrayList<Post>
+public final class PostList extends ObservableArrayList<Post>
         implements SwipeRefreshLayout.OnRefreshListener, GreedoLayoutSizeCalculator.SizeCalculatorDelegate {
 
     private static final String TAG = PostList.class.getSimpleName();
