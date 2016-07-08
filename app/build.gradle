@@ -22,10 +22,8 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
     //    android support library
     compile 'com.android.support:design:24.0.0'
-    compile 'com.android.support:support-v4:24.0.0'
     compile 'com.android.support:appcompat-v7:24.0.0'
     compile 'com.android.support:recyclerview-v7:24.0.0'
     //    https://github.com/500px/greedo-layout-for-android
@@ -46,7 +44,6 @@ dependencies {
     compile 'com.facebook.fresco:animated-gif:0.11.0'
     compile 'com.facebook.fresco:animated-webp:0.11.0'
     compile 'com.facebook.fresco:webpsupport:0.11.0'
-    compile 'org.jetbrains:annotations-java5:15.0'
     //    https://github.com/nitrico/LastAdapter
     compile 'com.github.nitrico.lastadapter:lastadapter:1.1.1'
 }
