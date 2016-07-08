@@ -10,11 +10,8 @@ android {
         versionCode 1
         versionName "1.0"
     }
-    buildTypes {
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-fresco.pro', 'proguard-glide.pro', 'proguard-retrofit.pro'
-        }
+    dataBinding {
+        enabled = true
     }
 }
 
@@ -50,4 +47,6 @@ dependencies {
     compile 'com.facebook.fresco:animated-webp:0.11.0'
     compile 'com.facebook.fresco:webpsupport:0.11.0'
     compile 'org.jetbrains:annotations-java5:15.0'
+    //    https://github.com/nitrico/LastAdapter
+    compile 'com.github.nitrico.lastadapter:lastadapter:1.1.1'
 }
