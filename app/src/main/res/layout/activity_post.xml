@@ -4,13 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <me.shiro.chesto.postActivity.PostPager
+    <me.shiro.chesto.activityPost.PostPager
         android:id="@+id/postPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <ImageButton
-        android:id="@+id/upButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start|top"
@@ -39,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <me.shiro.chesto.postActivity.PostTagLayout
+            <me.shiro.chesto.activityPost.PostTagLayout
                 android:id="@+id/flowLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -62,7 +61,6 @@
         app:layout_anchorGravity="center_vertical|start" />
 
     <ImageButton
-        android:id="@+id/downloadButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/bMargin"

@@ -1,4 +1,4 @@
-package me.shiro.chesto.postActivity;
+package me.shiro.chesto.activityPost;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;

@@ -4,11 +4,9 @@
 
     <data>
 
-        <import type="me.shiro.chesto.danbooruRetrofit.Post" />
-
         <variable
             name="item"
-            type="Post" />
+            type="me.shiro.chesto.retrofitDanbooru.Post" />
     </data>
 
     <com.facebook.drawee.view.SimpleDraweeView

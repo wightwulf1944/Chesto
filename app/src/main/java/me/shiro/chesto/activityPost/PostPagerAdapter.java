@@ -1,4 +1,4 @@
-package me.shiro.chesto.postActivity;
+package me.shiro.chesto.activityPost;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
@@ -22,7 +22,7 @@ import java.util.Queue;
 import me.shiro.chesto.PostList;
 import me.shiro.chesto.R;
 import me.shiro.chesto.Utils;
-import me.shiro.chesto.danbooruRetrofit.Post;
+import me.shiro.chesto.retrofitDanbooru.Post;
 import me.shiro.chesto.events.Event;
 import me.shiro.chesto.fresco.zoomable.ZoomableDraweeView;
 

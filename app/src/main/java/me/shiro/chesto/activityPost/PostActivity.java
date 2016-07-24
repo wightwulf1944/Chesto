@@ -1,4 +1,4 @@
-package me.shiro.chesto.postActivity;
+package me.shiro.chesto.activityPost;
 
 import android.animation.ObjectAnimator;
 import android.content.Intent;

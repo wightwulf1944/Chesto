@@ -18,8 +18,8 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 
 import me.shiro.chesto.PostList;
-import me.shiro.chesto.danbooruRetrofit.Post;
-import me.shiro.chesto.postActivity.PostActivity;
+import me.shiro.chesto.retrofitDanbooru.Post;
+import me.shiro.chesto.activityPost.PostActivity;
 
 /**
  * Created by Shiro on 4/6/2016.

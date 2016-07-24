@@ -7,6 +7,9 @@ import android.os.Looper;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+
 /**
  * Created by Shiro on 4/28/2016.
  */
@@ -31,5 +34,7 @@ public final class ChestoApplication extends Application {
         super.onCreate();
         instance = this;
         Fresco.initialize(this);
+        final RealmConfiguration realmConfig = new RealmConfiguration.Builder(this).build();
+        Realm.setDefaultConfiguration(realmConfig);
     }
 }

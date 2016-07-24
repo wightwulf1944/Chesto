@@ -1,7 +1,6 @@
-package me.shiro.chesto.mainActivity;
+package me.shiro.chesto.activityMain;
 
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -9,7 +8,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,21 +26,21 @@ import me.shiro.chesto.BR;
 import me.shiro.chesto.PostList;
 import me.shiro.chesto.R;
 import me.shiro.chesto.Utils;
-import me.shiro.chesto.danbooruRetrofit.Post;
+import me.shiro.chesto.activitySearch.SearchActivity;
+import me.shiro.chesto.retrofitDanbooru.Post;
 import me.shiro.chesto.events.Event;
-import me.shiro.chesto.postActivity.PostActivity;
+import me.shiro.chesto.activityPost.PostActivity;
 
-public final class MainActivity extends AppCompatActivity implements LastAdapter.OnBindListener, LastAdapter.OnClickListener {
+public final class MainActivity extends AppCompatActivity
+        implements LastAdapter.OnBindListener, LastAdapter.OnClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final EventBus eventBus = EventBus.getDefault();
     private final PostList postList = PostList.getInstance();
     private AppBarLayout appBar;
-    private MenuItem searchViewItem;
     private Toolbar actionBar;
     private SwipeRefreshLayout swipeView;
     private RecyclerView recyclerView;
-    private String searchQuery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +90,16 @@ public final class MainActivity extends AppCompatActivity implements LastAdapter
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.options_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    public void onSearchClick(MenuItem menuItem) {
+        startActivity(new Intent(this, SearchActivity.class));
+    }
+
+    @Override
     protected void onDestroy() {
         eventBus.unregister(this);
         super.onDestroy();
@@ -102,14 +110,13 @@ public final class MainActivity extends AppCompatActivity implements LastAdapter
         appBar.setExpanded(true);
         recyclerView.scrollToPosition(0);
         swipeView.scrollTo(0, 0);
-        searchViewItem.collapseActionView();
         handleIntent(intent);
     }
 
     private void handleIntent(Intent intent) {
         switch (intent.getAction()) {
             case Intent.ACTION_SEARCH:
-                searchQuery = intent.getStringExtra(SearchManager.QUERY);
+                final String searchQuery = intent.getStringExtra(SearchManager.QUERY);
                 actionBar.setSubtitle(searchQuery);
                 postList.newSearch(searchQuery);
                 break;
@@ -117,34 +124,6 @@ public final class MainActivity extends AppCompatActivity implements LastAdapter
                 postList.newSearch("");
                 break;
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.options_menu, menu);
-
-        searchViewItem = menu.findItem(R.id.search);
-
-        final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        final SearchView searchView = (SearchView) searchViewItem.getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-
-        searchViewItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                if (!searchViewItem.isActionViewExpanded()) {
-                    searchViewItem.expandActionView();
-                    if (searchQuery != null) {
-                        searchView.setQuery(searchQuery, false);
-                    }
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
-        new SearchSuggestions(searchView, this);
-        return true;
     }
 
     @Subscribe

@@ -1,4 +1,4 @@
-package me.shiro.chesto.danbooruRetrofit;
+package me.shiro.chesto.retrofitDanbooru;
 
 import android.util.Log;
 
@@ -20,7 +20,7 @@ public class DanbooruApi {
 
     private static final String TAG = DanbooruApi.class.getSimpleName();
 
-    public static final Danbooru api = new Retrofit.Builder()
+    private static final Danbooru api = new Retrofit.Builder()
             .baseUrl("http://danbooru.donmai.us/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()

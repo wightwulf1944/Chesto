@@ -1,4 +1,4 @@
-package me.shiro.chesto.postActivity;
+package me.shiro.chesto.activityPost;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -12,8 +12,8 @@ import org.apmem.tools.layouts.FlowLayout;
 
 import me.shiro.chesto.R;
 import me.shiro.chesto.Utils;
-import me.shiro.chesto.danbooruRetrofit.Post;
-import me.shiro.chesto.mainActivity.MainActivity;
+import me.shiro.chesto.retrofitDanbooru.Post;
+import me.shiro.chesto.activityMain.MainActivity;
 
 /**
  * Created by Shiro on 5/9/2016.

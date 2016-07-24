@@ -9,8 +9,8 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
-import me.shiro.chesto.danbooruRetrofit.DanbooruApi;
-import me.shiro.chesto.danbooruRetrofit.Post;
+import me.shiro.chesto.retrofitDanbooru.DanbooruApi;
+import me.shiro.chesto.retrofitDanbooru.Post;
 import me.shiro.chesto.events.Event;
 
 /**
