@@ -49,29 +49,15 @@ public final class MainActivity extends AppCompatActivity {
         swipeView.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         swipeView.setOnRefreshListener(postList);
 
-        final PostAdapter postAdapter = new PostAdapter(this);
         final GreedoLayoutManager layoutManager = new GreedoLayoutManager(postList);
         final int maxRowHeight = getResources().getDisplayMetrics().heightPixels / 3;
         layoutManager.setMaxRowHeight(maxRowHeight);
 
-        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         final int spacing = Utils.dpToPx(4);
-        recyclerView.addItemDecoration(new GreedoSpacingItemDecoration(spacing));
         recyclerView.setHasFixedSize(true);
+        recyclerView.addItemDecoration(new GreedoSpacingItemDecoration(spacing));
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(postAdapter);
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                View topChild = recyclerView.getChildAt(0);
-                if (topChild != null) {
-                    swipeView.setEnabled(
-                            topChild.getTop() == spacing
-                                    && layoutManager.findFirstVisibleItemPosition() == 0
-                    );
-                }
-            }
-        });
+        recyclerView.setAdapter(new PostAdapter(this));
 
         handleIntent(getIntent());
     }
